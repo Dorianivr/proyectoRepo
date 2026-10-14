@@ -1,0 +1,95 @@
+:root {
+  --gris-oscuro: #2b2d31;
+  --gris-medio: #4a4d55;
+  --gris-claro: #e5e7eb;
+  --amarillo: #facc15;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--gris-claro);
+  color: var(--gris-oscuro);
+  margin: 0;
+}
+
+header {
+  background: var(--gris-oscuro);
+  color: var(--amarillo);
+  padding: 16px;
+  text-align: center;
+  border-bottom: 4px solid var(--amarillo);
+}
+
+main {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 0 16px;
+}
+
+.tarjeta {
+  background: white;
+  border: 1px solid #cfd2d8;
+  border-top: 5px solid var(--amarillo);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 14px;
+  font-size: 14px;
+  color: var(--gris-medio);
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 4px;
+  border: 1px solid #cfd2d8;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  background: var(--amarillo);
+  color: var(--gris-oscuro);
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #eab308;
+}
+
+#mensaje {
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+.oculto {
+  display: none;
+}
+
+button.secundario {
+  background: transparent;
+  border: 2px solid var(--gris-medio);
+  color: var(--gris-medio);
+  margin-top: 12px;
+}
+
+button.secundario:hover {
+  background: var(--gris-claro);
+}
+
+#mensajeLogin {
+  margin-top: 12px;
+  font-weight: bold;
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SMARTPARK</title>
+    <link rel="stylesheet" href="ESTILOS.CSS" />
+  </head>
+  <body>
+    <header>
+      <h1>SMARTPARK</h1>
+    </header>
+
+    <main id="app">
+      <!-- PANTALLA 1: LOGIN -->
+      <section class="tarjeta" id="pantallaLogin">
+        <h2>Iniciar sesión</h2>
+
+        <label for="loginPlaca">Placa</label>
+        <input type="text" id="loginPlaca" placeholder="Ej. ABC-123" />
+
+        <label for="loginClave">Contraseña</label>
+        <input type="password" id="loginClave" placeholder="Tu contraseña" />
+
+        <button id="btnEntrar">Entrar</button>
+        <p id="mensajeLogin"></p>
+
+        <button class="secundario" id="irRegistro">
+          ¿No tienes cuenta? Regístrate
+        </button>
+      </section>
+
+      <!-- PANTALLA 2: REGISTRO -->
+      <section class="tarjeta oculto" id="pantallaRegistro">
+        <h2>Crear cuenta</h2>
+
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" placeholder="Tu nombre completo" />
+
+        <label for="placa">Placa</label>
+        <input type="text" id="placa" placeholder="Ej. ABC-123" />
+
+        <label for="tipo">Tipo de vehículo</label>
+        <select id="tipo">
+          <option value="carro">Carro</option>
+          <option value="moto">Moto</option>
+        </select>
+
+        <label for="clave">Contraseña</label>
+        <input type="password" id="clave" placeholder="Crea una contraseña" />
+
+        <button id="btnRegistrar">Registrarme</button>
+        <p id="mensaje"></p>
+
+        <button class="secundario" id="irLogin">Ya tengo cuenta</button>
+      </section>
+
+      <!-- PANTALLA 3: RESERVACIÓN (por ahora solo saludo) -->
+      <section class="tarjeta oculto" id="pantallaReserva">
+        <h2 id="saludo"></h2>
+        <p id="datosUsuario"></p>
+        <p>Aquí aparecerá la reservación (siguiente paso).</p>
+
+        <button class="secundario" id="btnSalir">Cerrar sesión</button>
+      </section>
+    </main>
+
+    <script src="APP.JS"></script>
+  </body>
+</html>
