@@ -78,6 +78,7 @@ def mouse_callback(event, x, y, flags, param):
         drawing = False
         roi = (min(ix, x), min(iy, y), abs(x - ix), abs(y - iy))
 
+#commit prueba
 
 cv2.namedWindow("OCR en tiempo real")
 cv2.setMouseCallback("OCR en tiempo real", mouse_callback)
