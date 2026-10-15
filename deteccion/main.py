@@ -1,8 +1,8 @@
 """Módulo principal: orquesta cámara, OCR, interfaz y clasificación de placas."""
-import camara
-import ocr
-import interfaz
-from placas import clasificar_placa
+from modulos import camara
+from modulos import ocr
+from modulos import interfaz
+from modulos.placas import clasificar_placa
 
 
 def main():
