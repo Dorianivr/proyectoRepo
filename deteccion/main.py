@@ -5,7 +5,7 @@ from modulos import interfaz
 from modulos  import zona_placa
 from modulos.placas import extraer_placa
  
- 
+ #sedrcfvtgbyhnumj
 def main():
     ocr.iniciar_ocr()
     cap = camara.abrir_camara(indice=1)
