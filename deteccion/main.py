@@ -3,6 +3,7 @@ from modulos import camara
 from modulos import ocr
 from modulos import interfaz
 from modulos  import zona_placa
+from modulos import detector_placa
 from modulos.placas import extraer_placa
  
  #sedrcfvtgbyhnumj
@@ -17,9 +18,9 @@ def main():
         ret, frame = camara.leer_frame(cap)
         if not ret:
             break
- 
+        zona = detector_placa.detectar_zona_placa(frame)
         # Localiza la placa automáticamente en cada frame
-        zona = zona_placa.detectar_zona_placa(frame)
+        #zona = zona_placa.detectar_zona_placa(frame)
  
         interfaz.dibujar_frame(frame, mensaje, zona)
         tecla = interfaz.leer_tecla()

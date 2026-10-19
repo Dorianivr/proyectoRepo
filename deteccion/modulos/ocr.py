@@ -1,5 +1,6 @@
 """Módulo de OCR: detección de texto con EasyOCR."""
 import easyocr
+from sympy import false, true
 
 # Variable global independiente con el texto detectado
 texto_detectado = ""
@@ -11,7 +12,7 @@ def iniciar_ocr(idiomas=("es", "en"), gpu: bool = False):
     """Inicializa el lector OCR (se hace una sola vez)."""
     global _reader
     if _reader is None:
-        _reader = easyocr.Reader(list(idiomas), gpu=gpu)
+        _reader = easyocr.Reader(list(idiomas), gpu=gpu) #///////////////////////////////////////////////////////////////
     return _reader
 
 
