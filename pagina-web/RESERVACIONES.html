@@ -1,0 +1,1061 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>SmartPark · Reservaciones</title>
+    <style>
+      :root {
+        --bg: #eef0f2;
+        --card: #fff;
+        --ink: #1c1d20;
+        --mute: #6b7078;
+        --line: #d9dce0;
+        --yel: #f7c92b;
+        --bar: #1c1d20;
+        --spot: #e3e6ea;
+        --busy: #7d848d;
+        --floor: #f6f7f8;
+        --ok: #1f9d55;
+        --bad: #d33;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #121316;
+          --card: #1d1f24;
+          --ink: #f2f3f5;
+          --mute: #9aa0a8;
+          --line: #34373d;
+          --floor: #26292f;
+          --spot: #3b4047;
+          --busy: #6b727c;
+          --bar: #0b0c0e;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      .app {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        min-height: 100vh;
+      }
+      header {
+        background: var(--bar);
+        color: #fff;
+        padding: calc(14px + env(safe-area-inset-top, 0px)) 18px 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        font-size: 19px;
+      }
+      header small {
+        margin-left: auto;
+        font-size: 12px;
+        font-weight: 600;
+        color: #c8ccd2;
+      }
+      main {
+        padding: 18px;
+      }
+      label {
+        display: block;
+        font-size: 15px;
+        margin: 0 0 5px;
+        font-weight: 600;
+      }
+      .field {
+        background: var(--card);
+        border: 1.5px solid var(--line);
+        border-radius: 12px;
+        padding: 0 12px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 14px;
+        font-size: 19px;
+      }
+      .field input {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        background: transparent;
+        font: inherit;
+        color: var(--ink);
+        outline: 0;
+      }
+      #plate {
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .field:focus-within {
+        border-color: var(--yel);
+        box-shadow: 0 0 0 3px rgba(247, 201, 43, 0.35);
+      }
+      .field.err {
+        border-color: var(--bad);
+      }
+      .g2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .map {
+        background: var(--card);
+        border: 1.5px solid var(--line);
+        border-radius: 14px;
+        padding: 10px;
+        margin-bottom: 12px;
+      }
+      .map h2 {
+        margin: 2px 4px 8px;
+        font-size: 15px;
+        font-weight: 700;
+      }
+      .map h2 span {
+        color: var(--mute);
+        font-weight: 500;
+        font-size: 13px;
+      }
+      .areas {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .area {
+        border: 2px solid var(--line);
+        background: var(--card);
+        color: var(--ink);
+        border-radius: 12px;
+        padding: 0;
+        overflow: hidden;
+        cursor: pointer;
+        font: inherit;
+        text-align: center;
+      }
+      .area .sw {
+        display: block;
+        height: 36px;
+        line-height: 36px;
+        font-weight: 800;
+        font-size: 16px;
+        color: #fff;
+      }
+      .area small {
+        display: block;
+        padding: 4px 2px 6px;
+        font-size: 12px;
+        color: var(--mute);
+      }
+      .area[aria-pressed="true"] {
+        border-color: var(--ink);
+        box-shadow: 0 0 0 2px var(--ink);
+      }
+      .area:focus-visible {
+        outline: 3px solid var(--ink);
+        outline-offset: 2px;
+      }
+      .hint {
+        margin: 6px 4px 10px;
+        padding: 14px;
+        border: 1.5px dashed var(--line);
+        border-radius: 10px;
+        color: var(--mute);
+        font-size: 14px;
+        text-align: center;
+      }
+      svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      .sp.resv {
+        fill: var(--spot);
+        stroke: var(--mute);
+        stroke-dasharray: 5 4;
+        stroke-width: 2;
+      }
+      .sp.busy {
+        fill: var(--busy);
+      }
+      .sp.sel {
+        fill: var(--yel);
+        stroke: var(--ink);
+        stroke-width: 3;
+      }
+      g[data-id] {
+        cursor: pointer;
+      }
+      g[data-id]:hover .sp {
+        opacity: 0.85;
+      }
+      g[data-id]:focus-visible .sp {
+        stroke: var(--ink);
+        stroke-width: 4;
+      }
+      .sl {
+        font-size: 11px;
+        font-weight: 700;
+        fill: var(--ink);
+        pointer-events: none;
+        text-anchor: middle;
+      }
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 12px;
+        font-size: 12px;
+        color: var(--mute);
+        margin: 8px 4px 0;
+      }
+      .legend i {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+        margin-right: 5px;
+        vertical-align: -1px;
+      }
+      .sum {
+        background: var(--card);
+        border: 1.5px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 14px;
+        margin-bottom: 14px;
+        font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .sum b {
+        font-size: 16px;
+      }
+      .msg {
+        color: var(--bad);
+        font-size: 14px;
+        min-height: 20px;
+        margin: 0 0 8px;
+      }
+      .btn {
+        width: 100%;
+        height: 54px;
+        border: 0;
+        border-radius: 30px;
+        background: var(--yel);
+        color: #1c1d20;
+        font-size: 20px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+      }
+      .btn.ghost {
+        background: transparent;
+        box-shadow: none;
+        border: 1.5px solid var(--line);
+        color: var(--ink);
+        font-size: 15px;
+        height: 44px;
+        font-weight: 600;
+      }
+      .btn:focus-visible {
+        outline: 3px solid var(--ink);
+        outline-offset: 3px;
+      }
+      .acts {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .hidden {
+        display: none !important;
+      }
+      .ticket {
+        background: var(--card);
+        border: 1.5px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .top {
+        background: var(--yel);
+        color: #fff;
+        padding: 16px;
+        text-align: center;
+      }
+      .top small {
+        display: block;
+        font-weight: 600;
+      }
+      .big {
+        font-size: 60px;
+        font-weight: 900;
+        line-height: 1.05;
+      }
+      .stat {
+        padding: 12px 16px;
+        text-align: center;
+        font-weight: 700;
+        background: var(--floor);
+        border-bottom: 1px solid var(--line);
+      }
+      .stat.warn {
+        background: #fde2b8;
+        color: #6b3d00;
+      }
+      .stat.in {
+        background: #cdeedb;
+        color: #0d5a2e;
+      }
+      .stat.dead {
+        background: #f6c9c9;
+        color: #7a1414;
+      }
+      .rows {
+        padding: 4px 18px;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 11px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .row:last-child {
+        border: 0;
+      }
+      .row span {
+        color: var(--mute);
+        font-size: 14px;
+      }
+      .row b {
+        font-size: 18px;
+      }
+      .mono {
+        font-family: ui-monospace, Menlo, Consolas, monospace;
+        letter-spacing: 2px;
+      }
+      .qr {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 14px;
+        gap: 6px;
+      }
+      #qr {
+        background: #fff;
+        padding: 8px;
+        border-radius: 8px;
+        min-height: 60px;
+      }
+      .note {
+        text-align: center;
+        color: var(--mute);
+        font-size: 13px;
+        margin: 12px 0 0;
+      }
+      #s2 > .map {
+        margin-top: 14px;
+      }
+      @media (max-width: 380px) {
+        main {
+          padding: 14px;
+        }
+        .big {
+          font-size: 48px;
+        }
+        .field {
+          font-size: 17px;
+        }
+        .area .sw {
+          font-size: 14px;
+        }
+      }
+      @media (min-width: 700px) {
+        .app {
+          max-width: 640px;
+        }
+        header {
+          padding-left: max(18px, calc((100% - 640px) / 2 + 18px));
+          padding-right: max(18px, calc((100% - 640px) / 2 + 18px));
+        }
+      }
+      @media (min-width: 900px) {
+        .app {
+          max-width: 1080px;
+        }
+        header {
+          padding-left: max(18px, calc((100% - 1080px) / 2 + 24px));
+          padding-right: max(18px, calc((100% - 1080px) / 2 + 24px));
+        }
+        main {
+          padding: 28px 24px;
+        }
+        #s1,
+        #s2 {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+          column-gap: 32px;
+          align-items: start;
+        }
+        #s1 > *,
+        #s2 > * {
+          grid-column: 1;
+        }
+        #s1 > .map {
+          grid-column: 2;
+          grid-row: 1 / span 7;
+        }
+        #s2 > .map {
+          grid-column: 2;
+          grid-row: 1 / span 6;
+          margin-top: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>🚗 SMARTPARK<small id="gate"></small></header>
+    <div class="app">
+      <main>
+        <section id="s1">
+          <label for="plate">Placa del vehículo</label>
+          <div class="field" id="pf">
+            <input
+              id="plate"
+              maxlength="9"
+              placeholder="ABC 123"
+              autocomplete="off"
+            />
+          </div>
+          <div class="g2">
+            <div>
+              <label for="date">Día</label>
+              <div class="field"><input id="date" type="date" /></div>
+            </div>
+            <div>
+              <label for="time">Hora de llegada</label>
+              <div class="field">
+                <input id="time" type="time" step="900" />
+              </div>
+            </div>
+          </div>
+          <div class="map">
+            <h2>1. Elige tu área</h2>
+            <div class="areas" id="areas"></div>
+            <div id="hint" class="hint">
+              Primero elige un área para ver sus cajones.
+            </div>
+            <div id="cajones" class="hidden">
+              <h2 id="cTitle"></h2>
+              <svg
+                viewBox="0 0 400 210"
+                id="map"
+                role="group"
+                aria-label="Cajones del área"
+              ></svg>
+              <div class="legend">
+                <span><i id="lgFree"></i>Libre</span>
+                <span
+                  ><i
+                    style="
+                      background: var(--spot);
+                      border: 1px dashed var(--mute);
+                    "
+                  ></i
+                  >Reservado</span
+                >
+                <span><i style="background: var(--busy)"></i>Ocupado</span>
+                <span><i style="background: var(--yel)"></i>Tu cajón</span>
+              </div>
+            </div>
+          </div>
+          <div class="sum">
+            <div>Tu cajón<br /><b id="selTxt">ninguno</b></div>
+            <div style="text-align: right">
+              Tarifa<br /><b>$15 MXN / hora</b>
+            </div>
+          </div>
+          <p class="msg" id="msg" role="alert"></p>
+          <button class="btn" id="book">Reservar</button>
+          <p class="note">
+            Tendrás 15 minutos de tolerancia después de tu hora de llegada. Se
+            cobra por el tiempo real que estés dentro.
+          </p>
+        </section>
+
+        <section id="s2" class="hidden">
+          <div class="ticket">
+            <div class="top" id="tTop">
+              <small id="tArea">Tu cajón reservado</small>
+              <div class="big" id="tSpot"></div>
+              <small>Nivel 1</small>
+            </div>
+            <div class="stat" id="stat" aria-live="polite"></div>
+            <div class="rows">
+              <div class="row">
+                <span>Código</span><b class="mono" id="tCode"></b>
+              </div>
+              <div class="row">
+                <span>Placa</span><b class="mono" id="tPlate"></b>
+              </div>
+              <div class="row"><span>Llegada</span><b id="tStart"></b></div>
+              <div class="row">
+                <span id="tCl">Tarifa</span><b id="tCost"></b>
+              </div>
+            </div>
+            <div class="qr">
+              <div id="qr"></div>
+              <small style="color: var(--mute)"
+                >Muestra este código si falla el internet</small
+              >
+            </div>
+          </div>
+          <div class="map">
+            <h2>Dónde está tu cajón</h2>
+            <svg
+              viewBox="0 0 400 210"
+              id="map2"
+              aria-label="Ubicación de tu cajón"
+            ></svg>
+          </div>
+          <p class="msg" id="msg2" role="alert" style="margin-top: 10px"></p>
+          <button class="btn" id="checkin">
+            Escanear QR de entrada (check-in)
+          </button>
+          <div class="acts">
+            <button class="btn ghost" id="cancel">Cancelar reserva</button>
+          </div>
+          <button class="btn ghost hidden" id="again" style="margin-top: 10px">
+            Hacer una nueva reserva
+          </button>
+        </section>
+      </main>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+      var TOL = 15 * 60000,
+        RATE = 15,
+        H = 3600000,
+        $ = function (i) {
+          return document.getElementById(i);
+        };
+      var AREAS = [
+        { id: "A", n: "Área A", c: "#2f6fed" },
+        { id: "B", n: "Área B", c: "#1f9d55" },
+        { id: "C", n: "Área C", c: "#d63b3b" },
+        { id: "D", n: "Área D", c: "#8e4ee0" },
+        { id: "E", n: "Área E", c: "#c9661a" },
+        { id: "F", n: "Área F", c: "#0f8a90" },
+      ];
+      function areaById(id) {
+        return AREAS.filter(function (a) {
+          return a.id === id;
+        })[0];
+      }
+      function ids(a) {
+        var o = [];
+        for (var i = 1; i <= 8; i++) o.push(a + "0" + i);
+        return o;
+      }
+      var area = null,
+        selected = null;
+
+      /* ---------- Almacenamiento (en el celular; ver nota para base de datos real) ---------- */
+      function ld(k) {
+        try {
+          var v = localStorage.getItem(k);
+          return v ? JSON.parse(v) : null;
+        } catch (e) {
+          return null;
+        }
+      }
+      function sv(k, v) {
+        try {
+          localStorage.setItem(k, JSON.stringify(v));
+        } catch (e) {}
+      }
+      function rm(k) {
+        try {
+          localStorage.removeItem(k);
+        } catch (e) {}
+      }
+      function seed() {
+        var n = Date.now();
+        return [
+          {
+            code: "SP-0001",
+            plate: "DEMO1",
+            spot: "A03",
+            start: n - H,
+            checkin: n - H,
+            status: "in",
+          },
+          {
+            code: "SP-0002",
+            plate: "DEMO2",
+            spot: "B02",
+            start: n - 30 * 60000,
+            checkin: n - 25 * 60000,
+            status: "in",
+          },
+          {
+            code: "SP-0003",
+            plate: "DEMO3",
+            spot: "A05",
+            start: n + 30 * 60000,
+            status: "reserved",
+          },
+          {
+            code: "SP-0004",
+            plate: "DEMO4",
+            spot: "B04",
+            start: n + H,
+            status: "reserved",
+          },
+          {
+            code: "SP-0005",
+            plate: "DEMO5",
+            spot: "C01",
+            start: n - 2 * 60000,
+            checkin: n - 60000,
+            status: "in",
+          },
+          {
+            code: "SP-0006",
+            plate: "DEMO6",
+            spot: "D06",
+            start: n + 10 * 60000,
+            status: "reserved",
+          },
+          {
+            code: "SP-0007",
+            plate: "DEMO7",
+            spot: "E02",
+            start: n - H * 2,
+            checkin: n - H * 2,
+            status: "in",
+          },
+          {
+            code: "SP-0008",
+            plate: "DEMO8",
+            spot: "F08",
+            start: n + 20 * 60000,
+            status: "reserved",
+          },
+        ];
+      }
+      function all() {
+        var r = ld("sp2_res");
+        if (!r) {
+          r = seed();
+          sv("sp2_res", r);
+        }
+        return r;
+      }
+      function mine() {
+        var c = ld("sp2_mine");
+        return c
+          ? all().filter(function (r) {
+              return r.code === c;
+            })[0] || null
+          : null;
+      }
+      function update(r) {
+        sv(
+          "sp2_res",
+          all().map(function (x) {
+            return x.code === r.code ? r : x;
+          }),
+        );
+      }
+
+      /* ---------- Disponibilidad ---------- */
+      function active(r) {
+        if (
+          r.status === "cancelled" ||
+          r.status === "expired" ||
+          r.status === "done"
+        )
+          return false;
+        if (r.status === "reserved" && Date.now() > r.start + TOL) return false;
+        return true;
+      }
+      function stateOf(id) {
+        var st = "free";
+        all().forEach(function (r) {
+          if (r.spot === id && active(r)) {
+            if (r.status === "in") st = "busy";
+            else if (st !== "busy") st = "resv";
+          }
+        });
+        return st;
+      }
+
+      /* ---------- Mapa de cajones de un área ---------- */
+      function draw(svg, aid, sel, interactive) {
+        var a = areaById(aid),
+          h =
+            '<rect x="0" y="94" width="400" height="22" fill="var(--floor)"/><text x="345" y="109" class="sl" style="font-weight:500;fill:var(--mute)">→ entrada</text>';
+        ids(aid).forEach(function (id, i) {
+          var x = 17 + (i % 4) * 94,
+            y = i < 4 ? 22 : 118,
+            st = stateOf(id),
+            on = id === sel,
+            cls =
+              "sp" +
+              (on
+                ? " sel"
+                : st === "resv"
+                  ? " resv"
+                  : st === "busy"
+                    ? " busy"
+                    : ""),
+            can = (interactive && st === "free" && !on) || (interactive && on),
+            ink = on || st === "resv" ? "var(--ink)" : "#fff";
+          h +=
+            "<g" +
+            (can
+              ? ' tabindex="0" role="button" aria-label="Cajón ' +
+                id +
+                '" data-id="' +
+                id +
+                '"'
+              : "") +
+            ">" +
+            '<rect class="' +
+            cls +
+            '" x="' +
+            x +
+            '" y="' +
+            y +
+            '" width="84" height="70" rx="8" fill="' +
+            a.c +
+            '"/>' +
+            '<text class="sl" style="font-size:16px;fill:' +
+            ink +
+            '" x="' +
+            (x + 42) +
+            '" y="' +
+            (y + 38) +
+            '">' +
+            id +
+            "</text>";
+          if (!on && st !== "free")
+            h +=
+              '<text class="sl" style="font-size:10px;font-weight:600;fill:' +
+              ink +
+              '" x="' +
+              (x + 42) +
+              '" y="' +
+              (y + 56) +
+              '">' +
+              (st === "busy" ? "🚗 Ocupado" : "Reservado") +
+              "</text>";
+          if (on)
+            h +=
+              '<text x="' +
+              (x + 42) +
+              '" y="' +
+              (y < 90 ? y - 5 : y + 86) +
+              '" text-anchor="middle" font-size="16">📍</text>';
+          h += "</g>";
+        });
+        $(svg).innerHTML = h;
+      }
+
+      /* ---------- Formulario ---------- */
+      function two(n) {
+        return n < 10 ? "0" + n : "" + n;
+      }
+      function startTs() {
+        var d = $("date").value,
+          t = $("time").value;
+        if (!d || !t) return null;
+        var s = new Date(d + "T" + t).getTime();
+        return isNaN(s) ? null : s;
+      }
+      function refresh() {
+        $("areas").innerHTML = AREAS.map(function (a) {
+          var free = ids(a.id).filter(function (i) {
+            return stateOf(i) === "free";
+          }).length;
+          return (
+            '<button type="button" class="area" data-a="' +
+            a.id +
+            '" aria-pressed="' +
+            (a.id === area) +
+            '"><span class="sw" style="background:' +
+            a.c +
+            '">' +
+            a.n +
+            "</span><small>" +
+            free +
+            (free === 1 ? " libre" : " libres") +
+            "</small></button>"
+          );
+        }).join("");
+        $("hint").classList.toggle("hidden", !!area);
+        $("cajones").classList.toggle("hidden", !area);
+        if (area) {
+          var a = areaById(area);
+          $("cTitle").innerHTML =
+            "2. Elige tu cajón <span>· " + a.n + ", Nivel 1</span>";
+          $("lgFree").style.background = a.c;
+          draw("map", area, selected, true);
+        }
+        $("selTxt").textContent = selected || "ninguno";
+      }
+      function initForm() {
+        var d = new Date(Date.now() + 15 * 60000);
+        d.setMinutes(Math.ceil(d.getMinutes() / 15) * 15, 0, 0);
+        var today =
+          d.getFullYear() +
+          "-" +
+          two(d.getMonth() + 1) +
+          "-" +
+          two(d.getDate());
+        $("date").value = today;
+        $("date").min = today;
+        $("time").value = two(d.getHours()) + ":" + two(d.getMinutes());
+        area = null;
+        selected = null;
+        $("plate").value = "";
+        $("msg").textContent = "";
+        $("msg").style.color = "";
+        refresh();
+      }
+      $("plate").addEventListener("input", function () {
+        this.value = this.value.replace(/[^A-Za-z0-9 -]/g, "");
+        $("pf").classList.remove("err");
+      });
+      $("areas").addEventListener("click", function (e) {
+        var b = e.target.closest("button[data-a]");
+        if (!b) return;
+        if (area !== b.dataset.a) {
+          area = b.dataset.a;
+          selected = null;
+        }
+        $("msg").textContent = "";
+        refresh();
+      });
+      function pick(id) {
+        selected = id;
+        $("msg").textContent = "";
+        refresh();
+      }
+      $("map").addEventListener("click", function (e) {
+        var g = e.target.closest("g[data-id]");
+        if (g) pick(g.dataset.id);
+      });
+      $("map").addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          var g = e.target.closest("g[data-id]");
+          if (g) {
+            e.preventDefault();
+            pick(g.dataset.id);
+          }
+        }
+      });
+
+      $("book").addEventListener("click", function () {
+        var pl = $("plate").value.trim().toUpperCase(),
+          s = startTs();
+        $("msg").style.color = "";
+        if (pl.length < 5) {
+          $("pf").classList.add("err");
+          $("plate").focus();
+          $("msg").textContent =
+            "Escribe la placa completa (mínimo 5 caracteres).";
+          return;
+        }
+        if (!s || s + TOL < Date.now()) {
+          $("msg").textContent =
+            "Elige una hora de llegada que no haya pasado.";
+          return;
+        }
+        if (!area) {
+          $("msg").textContent = "Primero elige un área.";
+          return;
+        }
+        if (!selected) {
+          $("msg").textContent =
+            "Ahora toca un cajón libre del área " + area + ".";
+          return;
+        }
+        if (stateOf(selected) !== "free") {
+          $("msg").textContent = "Ese cajón acaba de ocuparse. Elige otro.";
+          selected = null;
+          refresh();
+          return;
+        }
+        var r = {
+          code: "SP-" + Math.floor(1000 + Math.random() * 9000),
+          plate: pl,
+          spot: selected,
+          start: s,
+          status: "reserved",
+        };
+        var a = all();
+        a.push(r);
+        sv("sp2_res", a);
+        sv("sp2_mine", r.code);
+        showTicket();
+      });
+
+      /* ---------- Boleto ---------- */
+      function hhmm(t) {
+        var d = new Date(t);
+        return two(d.getHours()) + ":" + two(d.getMinutes());
+      }
+      function day(t) {
+        return new Date(t).toLocaleDateString("es-MX", {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+        });
+      }
+      function fmt(ms) {
+        var s = Math.max(0, Math.floor(ms / 1000)),
+          h = Math.floor(s / 3600),
+          m = Math.floor((s % 3600) / 60);
+        return h ? h + " h " + two(m) + " min" : two(m) + ":" + two(s % 60);
+      }
+      function showTicket() {
+        var r = mine();
+        if (!r) {
+          $("s2").classList.add("hidden");
+          $("s1").classList.remove("hidden");
+          return;
+        }
+        var a = areaById(r.spot.charAt(0));
+        $("s1").classList.add("hidden");
+        $("s2").classList.remove("hidden");
+        $("msg2").textContent = "";
+        $("tTop").style.background = a.c;
+        $("tArea").textContent = a.n + " · tu cajón";
+        $("tSpot").textContent = r.spot;
+        $("tCode").textContent = r.code;
+        $("tPlate").textContent = r.plate;
+        $("tStart").textContent = day(r.start) + ", " + hhmm(r.start);
+        draw("map2", a.id, r.spot, false);
+        $("qr").innerHTML = "";
+        try {
+          new QRCode($("qr"), { text: r.code, width: 150, height: 150 });
+        } catch (e) {
+          $("qr").innerHTML =
+            '<b class="mono" style="color:#000;font-size:22px">' +
+            r.code +
+            "</b>";
+        }
+        tick();
+      }
+      function tick() {
+        var r = mine();
+        if (!r || $("s2").classList.contains("hidden")) return;
+        var n = Date.now(),
+          cls = "stat",
+          txt = "";
+        if (r.status === "reserved" && n > r.start + TOL) {
+          r.status = "expired";
+          update(r);
+        }
+        if (r.status === "in") {
+          cls += " in";
+          txt =
+            "Dentro desde las " +
+            hhmm(r.checkin) +
+            " · " +
+            fmt(n - r.checkin) +
+            " estacionado";
+          $("tCl").textContent = "Costo acumulado";
+          $("tCost").textContent =
+            "$" + Math.max(1, Math.ceil((n - r.checkin) / H)) * RATE + " MXN";
+        } else {
+          $("tCl").textContent = "Tarifa";
+          $("tCost").textContent = "$" + RATE + " MXN / hora";
+          if (r.status === "expired" || r.status === "cancelled") {
+            cls += " dead";
+            txt = "Reserva vencida: tu cajón se liberó";
+          } else if (n < r.start) {
+            txt = "Tu reserva empieza en " + fmt(r.start - n);
+          } else {
+            var left = r.start + TOL - n;
+            txt = "Llega en " + fmt(left) + " o se libera tu cajón";
+            if (left < 10 * 60000) cls += " warn";
+          }
+        }
+        $("stat").className = cls;
+        $("stat").textContent = txt;
+        var dead = r.status === "expired" || r.status === "cancelled";
+        $("checkin").classList.toggle(
+          "hidden",
+          r.status !== "reserved" || dead,
+        );
+        $("cancel").classList.toggle("hidden", dead);
+        $("again").classList.toggle("hidden", !dead);
+        $("cancel").textContent =
+          r.status === "in" ? "Terminar y salir" : "Cancelar reserva";
+      }
+      setInterval(tick, 1000);
+
+      function checkIn() {
+        var r = mine();
+        if (!r || r.status !== "reserved") return;
+        if (Date.now() < r.start - TOL) {
+          $("msg2").textContent =
+            "Aún es temprano: el check-in abre 15 min antes de tu llegada.";
+          return;
+        }
+        r.status = "in";
+        r.checkin = Date.now();
+        update(r);
+        tick();
+      }
+      $("checkin").addEventListener("click", checkIn);
+      $("cancel").addEventListener("click", function () {
+        var r = mine();
+        if (!r) return;
+        var was = r.status,
+          cost =
+            was === "in"
+              ? Math.max(1, Math.ceil((Date.now() - r.checkin) / H)) * RATE
+              : 0;
+        r.status = was === "in" ? "done" : "cancelled";
+        update(r);
+        rm("sp2_mine");
+        initForm();
+        showTicket();
+        if (was === "in") {
+          $("msg").style.color = "var(--ok)";
+          $("msg").textContent =
+            "Salida registrada. Total a pagar: $" + cost + " MXN.";
+        }
+      });
+      $("again").addEventListener("click", function () {
+        rm("sp2_mine");
+        initForm();
+        showTicket();
+      });
+
+      /* ---------- Inicio ---------- */
+      var g = (location.hash || "").replace("#", "");
+      if (g) $("gate").textContent = g.replace(/(\d+)/, " $1");
+      initForm();
+      showTicket();
+      if (/^entrada/.test(g)) checkIn(); // QR de la puerta: check-in automático
+    </script>
+  </body>
+</html>
