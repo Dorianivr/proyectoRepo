@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>SmartPark · Acceso administrador</title>
+    <style>
+      :root {
+        --card: #1c1d21;
+        --ink: #fff;
+        --mute: #a4a7ae;
+        --line: #3a3b41;
+        --yel: #f5c400;
+        --bad: #ff9a8a;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        color: var(--ink);
+        font-family:
+          "Plus Jakarta Sans", "Segoe UI", Roboto, system-ui, sans-serif;
+        background: linear-gradient(180deg, #2c2d32 0%, #1a1b1e 100%);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: calc(10px + env(safe-area-inset-top, 0px)) 18px 10px;
+        background: #111;
+        border-bottom: 4px solid #f5c400;
+      }
+      .lg {
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        background: #f5c400;
+        display: grid;
+        place-items: center;
+        flex: none;
+      }
+      .brand {
+        font-size: clamp(24px, 6vw, 28px);
+        letter-spacing: 0.5px;
+        line-height: 1;
+      }
+      .brand b {
+        font-weight: 800;
+        color: #f5c400;
+      }
+      .brand span {
+        font-weight: 300;
+        color: #fff;
+      }
+      header small {
+        margin-left: auto;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        color: #c8ccd2;
+      }
+      main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px 16px;
+      }
+      .card {
+        position: relative;
+        width: 100%;
+        max-width: 460px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        padding: 40px 22px 24px;
+        box-shadow: 0 0 44px rgba(245, 196, 0, 0.14);
+        overflow: hidden;
+      }
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 12%;
+        right: 12%;
+        height: 4px;
+        border-radius: 0 0 6px 6px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--yel),
+          transparent
+        );
+      }
+      .ic {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 16px;
+        border-radius: 50%;
+        background: rgba(245, 196, 0, 0.12);
+        border: 2px solid rgba(245, 196, 0, 0.5);
+        display: grid;
+        place-items: center;
+      }
+      h1 {
+        margin: 0 0 8px;
+        text-align: center;
+        font-size: clamp(26px, 7vw, 34px);
+        font-weight: 800;
+      }
+      .lead {
+        margin: 0 0 26px;
+        text-align: center;
+        color: var(--mute);
+        font-size: clamp(14px, 3.8vw, 16px);
+      }
+      label {
+        display: block;
+        margin: 0 0 6px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #d6d8dc;
+      }
+      .fld {
+        display: flex;
+        align-items: center;
+        background: #26272b;
+        border: 1.5px solid var(--line);
+        border-radius: 16px;
+        height: 58px;
+        padding: 0 14px;
+        margin-bottom: 16px;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+      }
+      .fld:focus-within {
+        border-color: var(--yel);
+        box-shadow: 0 0 0 4px rgba(245, 196, 0, 0.25);
+      }
+      .fld.err {
+        border-color: #e5533d;
+      }
+      .fld svg {
+        flex: none;
+        margin-right: 10px;
+        color: var(--mute);
+      }
+      .fld input {
+        flex: 1;
+        min-width: 0;
+        height: 100%;
+        border: 0;
+        background: transparent;
+        color: #fff;
+        font: 600 18px inherit;
+        font-family: inherit;
+        outline: 0;
+      }
+      .fld input::placeholder {
+        color: #6d7078;
+        font-weight: 500;
+      }
+      .eye {
+        flex: none;
+        border: 0;
+        background: none;
+        color: var(--mute);
+        padding: 8px;
+        margin-right: -6px;
+        cursor: pointer;
+        border-radius: 8px;
+        display: flex;
+      }
+      .eye:focus-visible,
+      .btn:focus-visible,
+      .back:focus-visible {
+        outline: 3px solid #fff;
+        outline-offset: 2px;
+      }
+      .msg {
+        min-height: 22px;
+        margin: -2px 0 14px;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--bad);
+      }
+      .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        height: 64px;
+        border: 0;
+        border-radius: 20px;
+        background: var(--yel);
+        color: #26272b;
+        font: 800 clamp(20px, 5.5vw, 24px) inherit;
+        font-family: inherit;
+        cursor: pointer;
+        box-shadow: 0 8px 28px rgba(245, 196, 0, 0.3);
+      }
+      .btn:disabled {
+        background: #4a4b50;
+        color: #9a9ca3;
+        box-shadow: none;
+        cursor: not-allowed;
+      }
+      .back {
+        display: block;
+        margin-top: 18px;
+        text-align: center;
+        color: var(--mute);
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .back:hover {
+        color: #fff;
+      }
+      @media (min-width: 700px) {
+        main {
+          padding: 48px;
+        }
+        .card {
+          padding: 48px 34px 30px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="lg" aria-hidden="true">
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 34 34"
+          fill="none"
+          stroke="#111"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M5 12l3-6h18l3 6" />
+          <path d="M6 12h22v16H6z" />
+          <path d="M11 28v-7h12v7" />
+          <path d="M14 17h6" />
+        </svg>
+      </div>
+      <div class="brand"><b>SMART</b><span>PARK</span></div>
+      <small>ADMIN</small>
+    </header>
+    <main>
+      <div class="card">
+        <div class="ic" aria-hidden="true">
+          <svg
+            width="30"
+            height="30"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#f5c400"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="4" y="11" width="16" height="10" rx="2" />
+            <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+          </svg>
+        </div>
+        <h1>Acceso Administrador</h1>
+        <p class="lead">Ingresa tus credenciales para continuar</p>
+
+        <label for="usr">Usuario</label>
+        <div class="fld" id="fu">
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></svg
+          ><input
+            id="usr"
+            type="text"
+            autocomplete="username"
+            autocapitalize="none"
+            spellcheck="false"
+            placeholder="admin"
+          />
+        </div>
+
+        <label for="pwd">Contraseña</label>
+        <div class="fld" id="fp">
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="4" y="11" width="16" height="10" rx="2" />
+            <path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg
+          ><input
+            id="pwd"
+            type="password"
+            autocomplete="current-password"
+            placeholder="••••••••"
+          />
+          <button
+            type="button"
+            class="eye"
+            id="eye"
+            aria-label="Mostrar contraseña"
+          >
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+        </div>
+
+        <p class="msg" id="msg" role="alert"></p>
+        <button class="btn" id="go">
+          Iniciar sesión
+          <svg
+            width="26"
+            height="26"
+            viewBox="0 0 28 28"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M4 14h20M16 6l8 8-8 8" />
+          </svg>
+        </button>
+        <a class="back" href="smartpark-acceso.html"
+          >← Ir al acceso de clientes</a
+        >
+      </div>
+    </main>
+    <script>
+      /* ===== CAMBIA AQUÍ EL USUARIO Y LA CONTRASEÑA ===== */
+      var ADMIN_USER = "admin",
+        ADMIN_PASS = "smartpark2026";
+      var MAX_TRIES = 3,
+        LOCK_SECONDS = 30;
+
+      var $ = function (i) {
+          return document.getElementById(i);
+        },
+        tries = 0,
+        lockUntil = 0,
+        timer = null;
+      function ss(k, v) {
+        try {
+          if (v === undefined) return sessionStorage.getItem(k);
+          if (v === null) sessionStorage.removeItem(k);
+          else sessionStorage.setItem(k, v);
+          return true;
+        } catch (e) {
+          return null;
+        }
+      }
+
+      if (ss("sp2_admin") === "1") location.replace("smartpark-admin.html"); // ya tiene sesión
+
+      lockUntil = +ss("sp2_lock") || 0;
+      function bad(m, who) {
+        $("msg").textContent = m;
+        $("fu").classList.toggle("err", who !== "p");
+        $("fp").classList.toggle("err", who !== "u");
+      }
+      function clean() {
+        $("msg").textContent = "";
+        $("fu").classList.remove("err");
+        $("fp").classList.remove("err");
+      }
+      ["usr", "pwd"].forEach(function (id) {
+        $(id).addEventListener("input", clean);
+        $(id).addEventListener("keydown", function (e) {
+          if (e.key === "Enter") login();
+        });
+      });
+      $("eye").addEventListener("click", function () {
+        var s = $("pwd").type === "password";
+        $("pwd").type = s ? "text" : "password";
+        this.setAttribute(
+          "aria-label",
+          s ? "Ocultar contraseña" : "Mostrar contraseña",
+        );
+      });
+      $("go").addEventListener("click", login);
+
+      function tickLock() {
+        var left = Math.ceil((lockUntil - Date.now()) / 1000);
+        if (left <= 0) {
+          clearInterval(timer);
+          timer = null;
+          tries = 0;
+          ss("sp2_lock", null);
+          $("go").disabled = false;
+          $("msg").textContent = "";
+          return;
+        }
+        $("go").disabled = true;
+        $("msg").textContent =
+          "Demasiados intentos. Espera " + left + " s para volver a intentar.";
+      }
+      if (lockUntil > Date.now()) {
+        tickLock();
+        timer = setInterval(tickLock, 1000);
+      }
+
+      function login() {
+        if (lockUntil > Date.now()) return;
+        var u = $("usr").value.trim(),
+          p = $("pwd").value;
+        if (!u || !p) {
+          bad("Escribe tu usuario y tu contraseña.", !u ? "u" : "p");
+          (!u ? $("usr") : $("pwd")).focus();
+          return;
+        }
+        if (u.toLowerCase() === ADMIN_USER.toLowerCase() && p === ADMIN_PASS) {
+          if (ss("sp2_admin", "1") === null) {
+            bad(
+              "El navegador bloquea el almacenamiento de sesión. Actívalo para continuar.",
+            );
+            return;
+          }
+          location.href = "smartpark-admin.html";
+          return;
+        }
+        tries++;
+        $("pwd").value = "";
+        if (tries >= MAX_TRIES) {
+          lockUntil = Date.now() + LOCK_SECONDS * 1000;
+          ss("sp2_lock", String(lockUntil));
+          tickLock();
+          timer = setInterval(tickLock, 1000);
+          return;
+        }
+        bad(
+          "Usuario o contraseña incorrectos. Intentos restantes: " +
+            (MAX_TRIES - tries) +
+            ".",
+        );
+        $("pwd").focus();
+      }
+    </script>
+  </body>
+</html>
