@@ -73,14 +73,22 @@
         outline-offset: 2px;
       }
       .logo {
-        font-size: clamp(26px, 6vw, 44px);
-        color: var(--teal);
+        font-size: clamp(24px, 6vw, 28px);
         letter-spacing: 0.5px;
-        margin-left: auto;
         line-height: 1;
+      }
+      .lg {
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        background: #f5c400;
+        display: grid;
+        place-items: center;
+        flex: none;
       }
       .logo b {
         font-weight: 800;
+        color: #f5c400;
       }
       .logo span {
         font-weight: 300;
@@ -350,6 +358,57 @@
         padding: 14px 0;
         font-size: 14px;
       }
+      dialog {
+        border: 0;
+        padding: 0;
+        border-radius: 18px;
+        max-width: 420px;
+        width: calc(100% - 32px);
+        background: var(--card);
+        color: var(--ink);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      }
+      dialog::backdrop {
+        background: rgba(0, 0, 0, 0.65);
+      }
+      .dh {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        padding: 20px 20px 6px;
+      }
+      .dh h3 {
+        margin: 0;
+        font-size: 20px;
+      }
+      .dw {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #f5c400;
+        color: #111;
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+        font-size: 24px;
+        flex: none;
+      }
+      .db {
+        padding: 8px 20px 4px;
+        font-size: 16px;
+        line-height: 1.5;
+        color: var(--ink);
+      }
+      .da {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 16px 20px 20px;
+      }
+      .da .btn {
+        height: 48px;
+        padding: 0 10px;
+      }
       @media (max-width: 760px) {
         .sec {
           grid-template-columns: 1fr;
@@ -383,11 +442,30 @@
           <path d="M4 5h32M4 16h32M4 27h32" />
         </svg>
       </button>
+
+      <div class="lg" aria-hidden="true">
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 34 34"
+          fill="none"
+          stroke="#111"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M5 12l3-6h18l3 6" />
+          <path d="M6 12h22v16H6z" />
+          <path d="M11 28v-7h12v7" />
+          <path d="M14 17h6" />
+        </svg>
+      </div>
+      <div class="logo"><b>SMART</b><span>PARK</span></div>
       <a
         class="ic"
         href="#entradas"
         aria-label="Estadísticas"
-        style="color: var(--teal); display: flex"
+        style="color: var(--teal); display: flex; margin-left: auto"
         ><svg
           width="38"
           height="34"
@@ -402,7 +480,6 @@
           <path d="M9 26v-8M16 26v-13M23 26v-9M30 26v-17" />
           <path d="M8 12l9-6 6 4 10-8" /></svg
       ></a>
-      <div class="logo"><b>SMART</b><span>PARK</span></div>
       <nav id="nav" class="hidden" aria-label="Secciones">
         <a href="#entradas">Entradas</a><a href="#libres">Cajones libres</a
         ><a href="#reservar">Reservar cajón</a
@@ -519,6 +596,17 @@
         </div>
       </section>
     </main>
+    <dialog id="dlg" aria-labelledby="dTitle">
+      <div class="dh">
+        <div class="dw" aria-hidden="true">!</div>
+        <h3 id="dTitle"></h3>
+      </div>
+      <div class="db" id="dBody"></div>
+      <div class="da">
+        <button class="btn out" id="dNo" type="button">No, volver</button
+        ><button class="btn" id="dOk" type="button"></button>
+      </div>
+    </dialog>
     <script>
       var $ = function (i) {
           return document.getElementById(i);
@@ -920,26 +1008,44 @@
               .join("")
           : '<tr><td colspan="5" class="empty">No hay reservas activas.</td></tr>';
       }
-      $("act").addEventListener("click", function (e) {
-        var b = e.target.closest("button[data-a]");
-        if (!b) return;
+      function cost(r) {
+        return Math.max(1, Math.ceil((Date.now() - r.checkin) / H)) * RATE;
+      }
+      function apply(code, act) {
         var a = all(),
           r = a.filter(function (x) {
-            return x.code === b.dataset.c;
+            return x.code === code;
           })[0],
           m = $("actMsg");
-        if (!r) return;
         m.className = "msg";
         m.textContent = "";
-        if (b.dataset.a === "in") {
+        if (
+          !r ||
+          !active(r) ||
+          (act === "in" && r.status !== "reserved") ||
+          (act === "out" && r.status !== "in")
+        ) {
+          m.textContent = "Esa reserva ya cambió. Se actualizó la lista.";
+          renderAll();
+          return;
+        }
+        m.className = "msg ok";
+        if (act === "in") {
           r.status = "in";
           r.checkin = Date.now();
-        } else if (b.dataset.a === "cancel") {
+          m.textContent =
+            "Check-in registrado: " + r.plate + " en " + r.spot + ".";
+        } else if (act === "cancel") {
           r.status = "cancelled";
+          m.textContent =
+            "Reserva de " +
+            r.plate +
+            " cancelada. El cajón " +
+            r.spot +
+            " quedó libre.";
         } else {
-          var c = Math.max(1, Math.ceil((Date.now() - r.checkin) / H)) * RATE;
+          var c = cost(r);
           r.status = "done";
-          m.className = "msg ok";
           m.textContent =
             "Salida de " +
             r.plate +
@@ -954,6 +1060,58 @@
         }
         sv("sp2_res", a);
         renderAll();
+      }
+      $("act").addEventListener("click", function (e) {
+        var b = e.target.closest("button[data-a]");
+        if (!b) return;
+        var act = b.dataset.a,
+          code = b.dataset.c,
+          r = all().filter(function (x) {
+            return x.code === code;
+          })[0];
+        if (!r) return;
+        var who = '<b class="mono">' + esc(r.plate) + "</b>",
+          sp = "<b>" + r.spot + "</b>",
+          go = function () {
+            apply(code, act);
+          };
+        $("actMsg").textContent = "";
+        if (act === "in")
+          ask({
+            title: "Confirmar check-in",
+            body:
+              "¿Registrar la entrada de " + who + " en el cajón " + sp + "?",
+            ok: "Sí, registrar entrada",
+            fn: go,
+          });
+        else if (act === "cancel")
+          ask({
+            title: "Cancelar reserva",
+            body:
+              "Vas a cancelar la reserva de " +
+              who +
+              " en el cajón " +
+              sp +
+              ". El cajón quedará libre y <b>esta acción no se puede deshacer</b>.",
+            ok: "Sí, cancelar reserva",
+            danger: 1,
+            fn: go,
+          });
+        else
+          ask({
+            title: "Registrar salida",
+            body:
+              "¿Confirmas la salida de " +
+              who +
+              " del cajón " +
+              sp +
+              "?<br>Total a pagar: <b>$" +
+              cost(r) +
+              " MXN</b>. El cajón quedará libre.",
+            ok: "Sí, registrar salida",
+            danger: 1,
+            fn: go,
+          });
       });
 
       /* ---- Empleados ---- */
@@ -1007,10 +1165,58 @@
       $("emp").addEventListener("click", function (ev) {
         var b = ev.target.closest("button[data-i]");
         if (!b) return;
-        var e = emps();
-        e.splice(+b.dataset.i, 1);
-        sv("sp2_emp", e);
-        renderAll();
+        var x = emps()[+b.dataset.i];
+        if (!x) return;
+        ask({
+          title: "Eliminar empleado",
+          body:
+            "Vas a quitar a <b>" +
+            esc(x.name) +
+            '</b> (<b class="mono">' +
+            esc(x.plate) +
+            "</b>) de la lista de empleados. <b>Esta acción no se puede deshacer</b>.",
+          ok: "Sí, eliminar",
+          danger: 1,
+          fn: function () {
+            var e = emps().filter(function (y) {
+              return y.plate !== x.plate;
+            });
+            sv("sp2_emp", e);
+            $("empMsg").className = "msg ok";
+            $("empMsg").textContent = "Empleado eliminado.";
+            renderAll();
+          },
+        });
+      });
+
+      /* ---- Confirmación antes de eliminar o modificar ---- */
+      var pending = null;
+      function ask(o) {
+        $("dTitle").textContent = o.title;
+        $("dBody").innerHTML = o.body;
+        $("dOk").textContent = o.ok;
+        pending = o.fn;
+        $("dlg").showModal();
+        (o.danger ? $("dNo") : $("dOk")).focus();
+      }
+      $("dNo").addEventListener("click", function () {
+        pending = null;
+        $("dlg").close();
+      });
+      $("dOk").addEventListener("click", function () {
+        var f = pending;
+        pending = null;
+        $("dlg").close();
+        if (f) f();
+      });
+      $("dlg").addEventListener("click", function (e) {
+        if (e.target === this) {
+          pending = null;
+          this.close();
+        }
+      });
+      $("dlg").addEventListener("close", function () {
+        pending = null;
       });
 
       /* ---- Menú ---- */
