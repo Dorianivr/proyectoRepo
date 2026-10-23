@@ -1,0 +1,51 @@
+/* comun.css · Estilos que comparten todas las pantallas (encabezado SmartPark) */
+* {
+  box-sizing: border-box;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 18px 10px;
+  background: #111;
+  border-bottom: 4px solid #f5c400;
+}
+
+.lg {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: #f5c400;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.brand {
+  font-size: clamp(24px, 6vw, 28px);
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+.brand b {
+  font-weight: 800;
+  color: #f5c400;
+}
+
+.brand span {
+  font-weight: 300;
+  color: #fff;
+}
+
+header small {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #c8ccd2;
+}
+
+.hidden {
+  display: none !important;
+}

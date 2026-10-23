@@ -1,0 +1,248 @@
+:root {
+  --card: #1c1d21;
+  --ink: #fff;
+  --mute: #a4a7ae;
+  --line: #3a3b41;
+  --yel: #f5c400;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--ink);
+  font-family: "Plus Jakarta Sans", "Segoe UI", Roboto, system-ui, sans-serif;
+  background: #202125;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+main {
+  flex: 1;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 30px 16px 36px;
+  text-align: center;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: clamp(28px, 7vw, 36px);
+  font-weight: 800;
+}
+
+.lead {
+  margin: 0;
+  color: var(--mute);
+  font-size: clamp(14px, 3.8vw, 17px);
+}
+
+.okc {
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: rgba(61, 220, 151, 0.14);
+  border: 2px solid #2f8f6f;
+  display: grid;
+  place-items: center;
+}
+
+.tk {
+  position: relative;
+  margin: 24px 0 16px;
+  background: #fff;
+  border: 3px solid #f5c400;
+  border-radius: 28px;
+  padding: 22px;
+  color: #1c2333;
+  text-align: left;
+  box-shadow: 0 0 30px rgba(245, 196, 0, 0.15);
+}
+
+.tk small {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #8d99ad;
+}
+
+.tkh {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.mono {
+  font-family: ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+}
+
+.tkh .mono {
+  font-size: clamp(18px, 5vw, 22px);
+  font-weight: 700;
+}
+
+.pill {
+  background: #f5c400;
+  color: #26272b;
+  font-weight: 800;
+  font-size: 14px;
+  padding: 7px 14px;
+  border-radius: 12px;
+}
+
+.hr {
+  border-top: 1.5px solid #e3e6ec;
+  margin: 14px 0 16px;
+}
+
+.g2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.bx {
+  background: #f6f8fb;
+  border: 1px solid #e6eaf0;
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+
+.g2 .bx {
+  margin: 0;
+}
+
+.bx b {
+  display: block;
+  margin-top: 4px;
+  font:
+    700 clamp(21px, 6vw, 28px)/1.2 ui-monospace,
+    "JetBrains Mono",
+    Menlo,
+    Consolas,
+    monospace;
+}
+
+.bx em {
+  display: block;
+  font-style: normal;
+  font-size: 12px;
+  color: #8a4b0f;
+}
+
+.cj {
+  background: #fff8d8;
+  border-color: #f3df8a;
+}
+
+.cj small {
+  color: #8a4b0f;
+}
+
+.cj b {
+  color: #d9820d;
+  font-size: clamp(26px, 8vw, 36px);
+}
+
+.tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 20px;
+  background: #26272b;
+  color: #f5c400;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.tear {
+  position: relative;
+  border-top: 2px dashed #d5d8de;
+  margin: 18px 0;
+}
+
+.tear::before,
+.tear::after {
+  content: "";
+  position: absolute;
+  top: -19px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #202125;
+}
+
+.tear::before {
+  left: -43px;
+}
+
+.tear::after {
+  right: -43px;
+}
+
+.tear.t2::before,
+.tear.t2::after {
+  display: none;
+}
+
+.gap {
+  height: 84px;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  height: 60px;
+  border: 0;
+  border-radius: 18px;
+  font: 800 20px inherit;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:focus-visible {
+  outline: 3px solid #f5c400;
+  outline-offset: 3px;
+}
+
+.dl {
+  background: #26272b;
+  color: #fff;
+}
+
+.ghost {
+  background: #232428;
+  color: #fff;
+  border: 1.5px solid var(--line);
+}
+
+.empty {
+  margin-top: 30px;
+}
+
+.empty .lead {
+  margin-bottom: 24px;
+}
+
+@media (min-width: 700px) {
+  main {
+    padding-top: 48px;
+  }
+}
+
+.ghost + .ghost {
+  margin-top: 12px;
+}
