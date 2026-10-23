@@ -52,14 +52,35 @@
         min-height: 100vh;
       }
       header {
-        background: var(--bar);
+        background: #111;
+        border-bottom: 4px solid #f5c400;
         color: #fff;
-        padding: calc(14px + env(safe-area-inset-top, 0px)) 18px 14px;
+        padding: calc(10px + env(safe-area-inset-top, 0px)) 18px 10px;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+      }
+      .lg {
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        background: #f5c400;
+        display: grid;
+        place-items: center;
+        flex: none;
+      }
+      .brand {
+        font-size: clamp(24px, 6vw, 28px);
+        letter-spacing: 0.5px;
+        line-height: 1;
+      }
+      .brand b {
         font-weight: 800;
-        font-size: 19px;
+        color: #f5c400;
+      }
+      .brand span {
+        font-weight: 300;
+        color: #fff;
       }
       header small {
         margin-left: auto;
@@ -347,19 +368,6 @@
         font-family: ui-monospace, Menlo, Consolas, monospace;
         letter-spacing: 2px;
       }
-      .qr {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 14px;
-        gap: 6px;
-      }
-      #qr {
-        background: #fff;
-        padding: 8px;
-        border-radius: 8px;
-        min-height: 60px;
-      }
       .note {
         text-align: center;
         color: var(--mute);
@@ -427,7 +435,27 @@
     </style>
   </head>
   <body>
-    <header>🚗 SMARTPARK<small id="gate"></small></header>
+    <header>
+      <div class="lg" aria-hidden="true">
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 34 34"
+          fill="none"
+          stroke="#111"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M5 12l3-6h18l3 6" />
+          <path d="M6 12h22v16H6z" />
+          <path d="M11 28v-7h12v7" />
+          <path d="M14 17h6" />
+        </svg>
+      </div>
+      <div class="brand"><b>SMART</b><span>PARK</span></div>
+      <small id="gate">RESERVAS</small>
+    </header>
     <div class="app">
       <main>
         <section id="s1">
@@ -516,12 +544,10 @@
                 <span id="tCl">Tarifa</span><b id="tCost"></b>
               </div>
             </div>
-            <div class="qr">
-              <div id="qr"></div>
-              <small style="color: var(--mute)"
-                >Muestra este código si falla el internet</small
-              >
-            </div>
+            <p class="note" style="padding: 0 18px 16px">
+              Al llegar, registra tu placa en el acceso para confirmar tu
+              entrada.
+            </p>
           </div>
           <div class="map">
             <h2>Dónde está tu cajón</h2>
@@ -532,9 +558,6 @@
             ></svg>
           </div>
           <p class="msg" id="msg2" role="alert" style="margin-top: 10px"></p>
-          <button class="btn" id="checkin">
-            Escanear QR de entrada (check-in)
-          </button>
           <div class="acts">
             <button class="btn ghost" id="cancel">Cancelar reserva</button>
           </div>
@@ -544,7 +567,6 @@
         </section>
       </main>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
       var TOL = 15 * 60000,
         RATE = 15,
@@ -951,15 +973,6 @@
         $("tPlate").textContent = r.plate;
         $("tStart").textContent = day(r.start) + ", " + hhmm(r.start);
         draw("map2", a.id, r.spot, false);
-        $("qr").innerHTML = "";
-        try {
-          new QRCode($("qr"), { text: r.code, width: 150, height: 150 });
-        } catch (e) {
-          $("qr").innerHTML =
-            '<b class="mono" style="color:#000;font-size:22px">' +
-            r.code +
-            "</b>";
-        }
         tick();
       }
       function tick() {
@@ -1000,10 +1013,6 @@
         $("stat").className = cls;
         $("stat").textContent = txt;
         var dead = r.status === "expired" || r.status === "cancelled";
-        $("checkin").classList.toggle(
-          "hidden",
-          r.status !== "reserved" || dead,
-        );
         $("cancel").classList.toggle("hidden", dead);
         $("again").classList.toggle("hidden", !dead);
         $("cancel").textContent =
@@ -1011,20 +1020,6 @@
       }
       setInterval(tick, 1000);
 
-      function checkIn() {
-        var r = mine();
-        if (!r || r.status !== "reserved") return;
-        if (Date.now() < r.start - TOL) {
-          $("msg2").textContent =
-            "Aún es temprano: el check-in abre 15 min antes de tu llegada.";
-          return;
-        }
-        r.status = "in";
-        r.checkin = Date.now();
-        update(r);
-        tick();
-      }
-      $("checkin").addEventListener("click", checkIn);
       $("cancel").addEventListener("click", function () {
         var r = mine();
         if (!r) return;
@@ -1051,11 +1046,8 @@
       });
 
       /* ---------- Inicio ---------- */
-      var g = (location.hash || "").replace("#", "");
-      if (g) $("gate").textContent = g.replace(/(\d+)/, " $1");
       initForm();
       showTicket();
-      if (/^entrada/.test(g)) checkIn(); // QR de la puerta: check-in automático
     </script>
   </body>
 </html>
