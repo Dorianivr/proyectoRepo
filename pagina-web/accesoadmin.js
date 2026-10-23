@@ -1,16 +1,15 @@
-/* ===== CAMBIA AQUÍ EL USUARIO Y LA CONTRASEÑA ===== */
-var ADMIN_USER = "admin",
-  ADMIN_PASS = "smartpark2026";
+/* ===== CAMBIA AQUÍ EL USUARIO Y LA CONTRASEÑA =====
+   OJO: este código lo puede leer cualquiera que abra la página, así que
+   sirve para una demostración. Para uso real, valida en un servidor. */
+const ADMIN_USER = "admin";
+const ADMIN_PASS = "smartpark2026";
 
-var MAX_TRIES = 3,
-  LOCK_SECONDS = 30;
+const MAX_TRIES = 3;
+const LOCK_SECONDS = 30;
 
-var $ = function (i) {
-    return document.getElementById(i);
-  },
-  tries = 0,
-  lockUntil = 0,
-  timer = null;
+let tries = 0;
+let lockUntil = 0;
+let timer = null;
 
 function ss(k, v) {
   try {
@@ -23,7 +22,7 @@ function ss(k, v) {
   }
 }
 
-if (ss("sp2_admin") === "1") location.replace("ADMINISTRADOR.html"); // ya tiene sesión
+if (ss("sp2_admin") === "1") location.replace("administrador.html"); // ya tiene sesión
 
 lockUntil = +ss("sp2_lock") || 0;
 
@@ -39,26 +38,23 @@ function clean() {
   $("fp").classList.remove("err");
 }
 
-["usr", "pwd"].forEach(function (id) {
+["usr", "pwd"].forEach((id) => {
   $(id).addEventListener("input", clean);
-  $(id).addEventListener("keydown", function (e) {
+  $(id).addEventListener("keydown", (e) => {
     if (e.key === "Enter") login();
   });
 });
 
 $("eye").addEventListener("click", function () {
-  var s = $("pwd").type === "password";
+  const s = $("pwd").type === "password";
   $("pwd").type = s ? "text" : "password";
-  this.setAttribute(
-    "aria-label",
-    s ? "Ocultar contraseña" : "Mostrar contraseña",
-  );
+  this.setAttribute("aria-label", s ? "Ocultar contraseña" : "Mostrar contraseña");
 });
 
 $("go").addEventListener("click", login);
 
 function tickLock() {
-  var left = Math.ceil((lockUntil - Date.now()) / 1000);
+  const left = Math.ceil((lockUntil - Date.now()) / 1000);
   if (left <= 0) {
     clearInterval(timer);
     timer = null;
@@ -69,8 +65,7 @@ function tickLock() {
     return;
   }
   $("go").disabled = true;
-  $("msg").textContent =
-    "Demasiados intentos. Espera " + left + " s para volver a intentar.";
+  $("msg").textContent = "Demasiados intentos. Espera " + left + " s para volver a intentar.";
 }
 
 if (lockUntil > Date.now()) {
@@ -80,8 +75,8 @@ if (lockUntil > Date.now()) {
 
 function login() {
   if (lockUntil > Date.now()) return;
-  var u = $("usr").value.trim(),
-    p = $("pwd").value;
+  const u = $("usr").value.trim();
+  const p = $("pwd").value;
   if (!u || !p) {
     bad("Escribe tu usuario y tu contraseña.", !u ? "u" : "p");
     (!u ? $("usr") : $("pwd")).focus();
@@ -89,12 +84,10 @@ function login() {
   }
   if (u.toLowerCase() === ADMIN_USER.toLowerCase() && p === ADMIN_PASS) {
     if (ss("sp2_admin", "1") === null) {
-      bad(
-        "El navegador bloquea el almacenamiento de sesión. Actívalo para continuar.",
-      );
+      bad("El navegador bloquea el almacenamiento de sesión. Actívalo para continuar.");
       return;
     }
-    location.href = "ADMINISTRADOR.html";
+    location.href = "administrador.html";
     return;
   }
   tries++;
@@ -106,10 +99,6 @@ function login() {
     timer = setInterval(tickLock, 1000);
     return;
   }
-  bad(
-    "Usuario o contraseña incorrectos. Intentos restantes: " +
-      (MAX_TRIES - tries) +
-      ".",
-  );
+  bad("Usuario o contraseña incorrectos. Intentos restantes: " + (MAX_TRIES - tries) + ".");
   $("pwd").focus();
 }

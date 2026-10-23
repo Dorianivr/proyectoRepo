@@ -1,66 +1,33 @@
-:root {
-  --card: #1c1d21;
-  --ink: #fff;
-  --mute: #a4a7ae;
-  --line: #3a3b41;
-  --yel: #f5c400;
-}
-
-html,
-body {
-  margin: 0;
-  min-height: 100%;
-}
-
-body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  color: var(--ink);
-  font-family: "Plus Jakarta Sans", "Segoe UI", Roboto, system-ui, sans-serif;
-  background: #202125;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
+/* boleto.css · Solo lo propio del boleto y del pago */
 
 main {
-  flex: 1;
-  width: 100%;
-  max-width: 460px;
-  margin: 0 auto;
-  padding: 30px 16px 36px;
   text-align: center;
-}
-
-h1 {
-  margin: 0 0 8px;
-  font-size: clamp(28px, 7vw, 36px);
-  font-weight: 800;
-}
-
-.lead {
-  margin: 0;
-  color: var(--mute);
-  font-size: clamp(14px, 3.8vw, 17px);
+  overflow-x: clip; /* las muescas del boleto sobresalen unos px */
 }
 
 .okc {
+  display: grid;
+  place-items: center;
   width: 68px;
   height: 68px;
   margin: 0 auto 14px;
   border-radius: 50%;
   background: rgba(61, 220, 151, 0.14);
   border: 2px solid #2f8f6f;
-  display: grid;
-  place-items: center;
 }
 
+.empty {
+  margin-top: 30px;
+}
+
+/* ---------- Boleto ---------- */
 .tk {
   position: relative;
-  margin: 24px 0 16px;
-  background: #fff;
-  border: 3px solid #f5c400;
-  border-radius: 28px;
+  margin: 22px 0 16px;
   padding: 22px;
+  border: 3px solid var(--yel);
+  border-radius: var(--r-lg);
+  background: #fff;
   color: #1c2333;
   text-align: left;
   box-shadow: 0 0 30px rgba(245, 196, 0, 0.15);
@@ -68,9 +35,9 @@ h1 {
 
 .tk small {
   display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: #8d99ad;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: #6b7790;
 }
 
 .tkh {
@@ -80,62 +47,58 @@ h1 {
   gap: 10px;
 }
 
-.mono {
-  font-family: ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
-}
-
 .tkh .mono {
-  font-size: clamp(18px, 5vw, 22px);
+  font-size: var(--fs-lg);
   font-weight: 700;
+  letter-spacing: 0;
 }
 
 .pill {
-  background: #f5c400;
-  color: #26272b;
-  font-weight: 800;
-  font-size: 14px;
   padding: 7px 14px;
   border-radius: 12px;
+  background: var(--yel);
+  color: #26272b;
+  font-size: var(--fs-sm);
+  font-weight: 800;
+}
+
+.pill.paid {
+  background: #1f9d68;
+  color: #fff;
+}
+
+.pill.out {
+  background: #3b3f46;
+  color: #fff;
 }
 
 .hr {
-  border-top: 1.5px solid #e3e6ec;
   margin: 14px 0 16px;
+  border-top: 1.5px solid #e3e6ec;
 }
 
-.g2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+.tk .g2 {
   margin-bottom: 12px;
 }
 
 .bx {
-  background: #f6f8fb;
-  border: 1px solid #e6eaf0;
-  border-radius: 16px;
   padding: 12px 14px;
-}
-
-.g2 .bx {
-  margin: 0;
+  border: 1px solid #e6eaf0;
+  border-radius: var(--r-md);
+  background: #f6f8fb;
 }
 
 .bx b {
   display: block;
   margin-top: 4px;
-  font:
-    700 clamp(21px, 6vw, 28px)/1.2 ui-monospace,
-    "JetBrains Mono",
-    Menlo,
-    Consolas,
-    monospace;
+  font: 700 clamp(20px, 6vw, 26px) / 1.2 var(--mono);
+  letter-spacing: 0;
 }
 
 .bx em {
   display: block;
   font-style: normal;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: #8a4b0f;
 }
 
@@ -149,8 +112,21 @@ h1 {
 }
 
 .cj b {
-  color: #d9820d;
-  font-size: clamp(26px, 8vw, 36px);
+  color: #b86a00;
+  font-size: clamp(26px, 8vw, 34px);
+}
+
+.tot b {
+  color: #1c2333;
+}
+
+.tot.paid {
+  background: #e4f6ee;
+  border-color: #b5e5d0;
+}
+
+.tot.paid b {
+  color: #15704a;
 }
 
 .tag {
@@ -159,15 +135,16 @@ h1 {
   padding: 1px 8px;
   border-radius: 20px;
   background: #26272b;
-  color: #f5c400;
+  color: var(--yel);
   font-size: 10px;
   font-weight: 800;
 }
 
+/* Cortes del boleto */
 .tear {
   position: relative;
-  border-top: 2px dashed #d5d8de;
   margin: 18px 0;
+  border-top: 2px dashed #d5d8de;
 }
 
 .tear::before,
@@ -178,7 +155,7 @@ h1 {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #202125;
+  background: #1b1c20;
 }
 
 .tear::before {
@@ -194,55 +171,110 @@ h1 {
   display: none;
 }
 
-.gap {
-  height: 84px;
+/* Código de barras */
+.barcode {
+  height: 72px;
+  padding: 0 6px;
 }
 
-.btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  width: 100%;
-  height: 60px;
-  border: 0;
-  border-radius: 18px;
-  font: 800 20px inherit;
-  font-family: inherit;
-  cursor: pointer;
-  text-decoration: none;
+.barnum {
+  margin: 6px 0 0;
+  text-align: center;
+  font-size: var(--fs-sm);
+  letter-spacing: 0.2em;
+  color: #6b7790;
 }
 
-.btn:focus-visible {
-  outline: 3px solid #f5c400;
-  outline-offset: 3px;
-}
-
-.dl {
+.btn.dl {
   background: #26272b;
   color: #fff;
+  box-shadow: none;
+  font-size: var(--fs-md);
 }
 
-.ghost {
-  background: #232428;
-  color: #fff;
-  border: 1.5px solid var(--line);
+/* ---------- Pago ---------- */
+.pay {
+  margin-top: 4px;
+  padding: 22px 20px;
+  text-align: center;
 }
 
-.empty {
-  margin-top: 30px;
+.pay h2 {
+  margin: 0 0 6px;
 }
 
-.empty .lead {
-  margin-bottom: 24px;
+.pay .amt {
+  margin: 8px 0 4px;
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.pay .amt small {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  color: var(--mute);
+}
+
+.pay .sub {
+  margin: 0 0 16px;
+  color: var(--mute);
+  font-size: var(--fs-sm);
+}
+
+.pay.ok {
+  border-color: rgba(61, 220, 151, 0.5);
+}
+
+.pay .stamp {
+  color: var(--ok);
+  font-weight: 800;
+}
+
+.pay .btn + .btn {
+  margin-top: 10px;
+}
+
+/* ---------- Ventana de pago ---------- */
+.payamt {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: var(--r-md);
+  background: var(--card2);
+  color: var(--mute);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.payamt b {
+  font-size: var(--fs-xl);
+  color: var(--ink);
+}
+
+.demo {
+  margin: 0 0 8px;
+  padding: 10px 12px;
+  border: 1px dashed var(--line);
+  border-radius: var(--r-sm);
+  color: var(--mute);
+  font-size: var(--fs-xs);
+}
+
+#payDlg .fld {
+  margin-bottom: 12px;
+}
+
+#payDlg .msg {
+  min-height: 20px;
+  margin-bottom: 8px;
+  text-align: left;
 }
 
 @media (min-width: 700px) {
   main {
-    padding-top: 48px;
+    padding-top: 40px;
   }
-}
-
-.ghost + .ghost {
-  margin-top: 12px;
 }

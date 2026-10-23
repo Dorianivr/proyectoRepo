@@ -1,344 +1,268 @@
-/* ---- Gráfica de entradas por día ---- */
+/* administrador.js · Panel de administración */
+
+let curArea = "A";
+let chosen = null;
+let filterQ = "";
+
+function todayStart() {
+  const n = new Date();
+  return new Date(n.getFullYear(), n.getMonth(), n.getDate()).getTime();
+}
+
+/* ---- Resumen: KPIs ---- */
+function renderKpis() {
+  let free = 0;
+  let resv = 0;
+  let busy = 0;
+  AREAS.forEach((a) =>
+    ids(a.id).forEach((i) => {
+      const s = stateOf(i);
+      if (s === "free") free++;
+      else if (s === "resv") resv++;
+      else busy++;
+    }),
+  );
+  const t0 = todayStart();
+  let entradas = 0;
+  let ingresos = 0;
+  all().forEach((r) => {
+    if (r.checkin && r.checkin >= t0) entradas++;
+    (r.payments || []).forEach((p) => {
+      if (p.at >= t0) ingresos += p.amount;
+    });
+  });
+  setHtml(
+    $("kpis"),
+    [
+      ["Libres", free, "free"],
+      ["Reservados", resv, "resv"],
+      ["Ocupados", busy, "busy"],
+      ["Entradas hoy", entradas, ""],
+      ["Ingresos hoy", "$" + ingresos, ""],
+    ]
+      .map(([l, v, c]) => `<div class="kpi ${c}"><b>${v}</b>${l}</div>`)
+      .join(""),
+  );
+}
+
+/* ---- Resumen: gráfica de entradas por día ---- */
 function renderChart() {
-  var h = ld("sp2_hist");
+  let h = ld(KEY.hist);
   if (!h) {
-    h = [38, 24, 41, 22, 35, 47, 52];
-    sv("sp2_hist", h);
+    h = [38, 24, 41, 22, 35, 47, 52]; // datos de ejemplo
+    sv(KEY.hist, h);
   }
   h = h.slice();
-  var now = new Date(),
-    idx = (now.getDay() + 6) % 7,
-    t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime(),
-    today = 0;
-  all().forEach(function (r) {
+  const now = new Date();
+  const idx = (now.getDay() + 6) % 7;
+  const t0 = todayStart();
+  let today = 0;
+  all().forEach((r) => {
     if (r.checkin && r.checkin >= t0) today++;
   });
   h[idx] += today;
-  var top = Math.ceil((Math.max.apply(null, h) + 1) / 10) * 10,
-    x0 = 46,
-    y0 = 170,
-    ph = 140,
-    pw = 340,
-    st = pw / 7,
-    bw = 30,
-    D = ["L", "M", "M", "J", "V", "S", "D"],
-    s = "";
-  for (var k = 0; k <= 4; k++) {
-    var y = y0 - (ph * k) / 4;
-    s +=
-      '<line class="gl" x1="' +
-      x0 +
-      '" x2="' +
-      (x0 + pw) +
-      '" y1="' +
-      y +
-      '" y2="' +
-      y +
-      '"/><text class="ax" x="' +
-      (x0 - 6) +
-      '" y="' +
-      (y + 4) +
-      '" text-anchor="end">' +
-      Math.round((top * k) / 4) +
-      "</text>";
+
+  const top = Math.ceil((Math.max.apply(null, h) + 1) / 10) * 10;
+  const x0 = 46;
+  const y0 = 170;
+  const ph = 140;
+  const pw = 340;
+  const st = pw / 7;
+  const bw = 30;
+  const D = ["L", "M", "M", "J", "V", "S", "D"];
+  let s = "";
+  for (let k = 0; k <= 4; k++) {
+    const y = y0 - (ph * k) / 4;
+    s += `<line class="gl" x1="${x0}" x2="${x0 + pw}" y1="${y}" y2="${y}"/><text class="ax" x="${x0 - 6}" y="${y + 4}" text-anchor="end">${Math.round((top * k) / 4)}</text>`;
   }
-  h.forEach(function (v, i) {
-    var bh = (ph * v) / top,
-      x = x0 + st * i + (st - bw) / 2;
+  h.forEach((v, i) => {
+    const bh = (ph * v) / top;
+    const x = x0 + st * i + (st - bw) / 2;
     s +=
-      '<rect class="bar' +
-      (i === idx ? " today" : "") +
-      '" x="' +
-      x +
-      '" y="' +
-      (y0 - bh) +
-      '" width="' +
-      bw +
-      '" height="' +
-      bh +
-      '" rx="3"><title>' +
-      v +
-      " entradas</title></rect>" +
-      '<text class="bv" x="' +
-      (x + bw / 2) +
-      '" y="' +
-      (y0 - bh - 4) +
-      '">' +
-      v +
-      '</text><text class="ax" style="font-size:13px;font-weight:' +
-      (i === idx ? 700 : 400) +
-      '" x="' +
-      (x + bw / 2) +
-      '" y="190" text-anchor="middle">' +
-      D[i] +
-      "</text>";
+      `<rect class="bar${i === idx ? " today" : ""}" x="${x}" y="${y0 - bh}" width="${bw}" height="${bh}" rx="3"><title>${v} entradas</title></rect>` +
+      `<text class="bv" x="${x + bw / 2}" y="${y0 - bh - 4}">${v}</text>` +
+      `<text class="ax" style="font-size:13px;font-weight:${i === idx ? 700 : 400}" x="${x + bw / 2}" y="190" text-anchor="middle">${D[i]}</text>`;
   });
-  s +=
-    '<text class="ax" transform="rotate(-90 11 100)" x="11" y="100" text-anchor="middle">Vehículos</text>';
-  $("chart").innerHTML = s;
+  s += `<text class="ax" transform="rotate(-90 11 100)" x="11" y="100" text-anchor="middle">Vehículos</text>`;
+  setHtml($("chart"), s);
 }
 
-/* ---- Cajones libres ---- */
-function renderFree() {
-  var free = 0,
-    resv = 0,
-    busy = 0,
-    h = "";
-  AREAS.forEach(function (a) {
-    var f = [];
-    ids(a.id).forEach(function (i) {
-      var s = stateOf(i);
-      if (s === "free") {
-        free++;
-        f.push(i);
-      } else if (s === "resv") resv++;
-      else busy++;
-    });
-    h +=
-      '<div class="ag"><b>' +
-      a.n +
-      '</b><div class="chips">' +
-      (f.length
-        ? f
-            .map(function (i) {
-              return (
-                '<button class="chip" data-id="' + i + '">' + i + "</button>"
-              );
-            })
-            .join("")
-        : "<em>Sin cajones libres</em>") +
-      "</div></div>";
-  });
-  $("free").innerHTML = h;
-  $("kpis").innerHTML =
-    '<div class="kpi"><b>' +
-    free +
-    '</b>Libres</div><div class="kpi"><b>' +
-    resv +
-    '</b>Reservados</div><div class="kpi"><b>' +
-    busy +
-    "</b>Ocupados</div>";
-  var cur = $("selCajon").value,
-    o = '<option value="">Selecciona cajón</option>';
-  AREAS.forEach(function (a) {
-    var f = ids(a.id).filter(function (i) {
-      return stateOf(i) === "free";
-    });
-    if (f.length)
-      o +=
-        '<optgroup label="' +
-        a.n +
-        '">' +
-        f
-          .map(function (i) {
-            return "<option>" + i + "</option>";
-          })
-          .join("") +
-        "</optgroup>";
-  });
-  $("selCajon").innerHTML = o;
-  if (cur && stateOf(cur) === "free") $("selCajon").value = cur;
+/* ---- Cajones: mapa ---- */
+function renderMap() {
+  setHtml(
+    $("areas"),
+    AREAS.map((x) => {
+      const f = ids(x.id).filter((i) => stateOf(i) === "free").length;
+      return `<button type="button" class="area" data-a="${x.id}" aria-pressed="${x.id === curArea}" aria-label="${x.n}, ${f} libres"><span class="sw" style="background:${x.c}"></span>${x.id}<small>${f}</small></button>`;
+    }).join(""),
+  );
+  if (chosen && stateOf(chosen) !== "free") chosen = null;
+  draw("map", curArea, chosen && chosen.charAt(0) === curArea ? chosen : null, true);
+
+  const ch = $("chosen");
+  ch.classList.toggle("on", !!chosen);
+  ch.textContent = chosen ? "Cajón " + chosen : "Ningún cajón seleccionado";
+  updateResBtn();
 }
 
-$("free").addEventListener("click", function (e) {
-  var b = e.target.closest(".chip");
+function updateResBtn() {
+  $("resBtn").disabled = !(chosen && norm($("resPlate").value).length >= 5);
+}
+
+$("areas").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-a]");
   if (!b) return;
-  $("selCajon").value = b.dataset.id;
-  $("reservar").scrollIntoView({ behavior: "smooth" });
-  $("resPlate").focus({ preventScroll: true });
+  curArea = b.dataset.a;
+  renderMap();
+});
+
+function pickSpot(id) {
+  chosen = id;
+  renderMap();
+  $("resPlate").focus();
+}
+
+$("map").addEventListener("click", (e) => {
+  const g = e.target.closest("g[data-id]");
+  if (g) pickSpot(g.dataset.id);
+});
+
+$("map").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") {
+    const g = e.target.closest("g[data-id]");
+    if (g) {
+      e.preventDefault();
+      pickSpot(g.dataset.id);
+    }
+  }
 });
 
 /* ---- Reservar ---- */
 $("resPlate").addEventListener("input", function () {
   this.value = this.value.replace(/[^A-Za-z0-9 -]/g, "");
+  updateResBtn();
 });
 
-$("resBtn").addEventListener("click", function () {
-  var sp = $("selCajon").value,
-    pl = $("resPlate").value.trim().toUpperCase(),
-    m = $("resMsg");
-  m.className = "msg";
-  if (!sp) {
-    m.textContent = "Selecciona un cajón.";
-    return;
+$("resBtn").addEventListener("click", () => {
+  const pl = fmtPlate($("resPlate").value);
+  if (!chosen) return toast("Selecciona un cajón en el mapa.", "bad");
+  if (norm(pl).length < 5) return toast("Escribe la placa completa (mínimo 5 caracteres).", "bad");
+  if (stateOf(chosen) !== "free") {
+    toast("Ese cajón ya no está libre.", "bad");
+    return renderAll();
   }
-  if (pl.length < 5) {
-    m.textContent = "Escribe la placa completa (mínimo 5 caracteres).";
-    return;
-  }
-  if (stateOf(sp) !== "free") {
-    m.textContent = "Ese cajón ya no está libre.";
-    renderAll();
-    return;
-  }
-  var a = all(),
-    code = "SP-" + Math.floor(1000 + Math.random() * 9000);
-  a.push({
-    code: code,
-    plate: pl,
-    spot: sp,
-    start: Date.now(),
-    status: "reserved",
-  });
-  sv("sp2_res", a);
+  const a = all();
+  const code = newCode();
+  a.push({ code: code, plate: pl, spot: chosen, start: Date.now(), status: "reserved" });
+  sv(KEY.res, a);
+  toast(`Cajón ${chosen} reservado para ${pl} (código ${code}). Tiene 15 min para llegar.`, "ok");
+  chosen = null;
   $("resPlate").value = "";
-  m.className = "msg ok";
-  m.textContent =
-    "Cajón " +
-    sp +
-    " reservado para " +
-    pl +
-    " (código " +
-    code +
-    "). Tiene 15 min para llegar.";
   renderAll();
 });
 
 /* ---- Reservas activas ---- */
-function renderActive() {
-  var rows = all()
-    .filter(active)
-    .sort(function (a, b) {
-      return a.spot < b.spot ? -1 : 1;
-    });
-  $("act").innerHTML = rows.length
-    ? rows
-        .map(function (r) {
-          var inn = r.status === "in";
-          return (
-            "<tr><td><b>" +
-            r.spot +
-            '</b></td><td class="mono">' +
-            esc(r.plate) +
-            (isEmp(r.plate) ? '<span class="tag e">Empleado</span>' : "") +
-            '</td><td><span class="tag ' +
-            (inn ? "o" : "r") +
-            '">' +
-            (inn ? "Ocupado" : "Reservado") +
-            "</span></td><td>" +
-            hhmm(inn ? r.checkin : r.start) +
-            "</td>" +
-            '<td class="act">' +
-            (inn
-              ? ""
-              : '<button class="btn sm" data-a="in" data-c="' +
-                r.code +
-                '">Check-in</button>') +
-            '<button class="btn sm out" data-a="' +
-            (inn ? "out" : "cancel") +
-            '" data-c="' +
-            r.code +
-            '">' +
-            (inn ? "Registrar salida" : "Cancelar") +
-            "</button></td></tr>"
-          );
-        })
-        .join("")
-    : '<tr><td colspan="5" class="empty">No hay reservas activas.</td></tr>';
-}
+$("q").addEventListener("input", function () {
+  filterQ = this.value;
+  renderActive();
+});
 
-function cost(r) {
-  return Math.max(1, Math.ceil((Date.now() - r.checkin) / H)) * RATE;
+function renderActive() {
+  const fq = norm(filterQ);
+  const rows = all()
+    .filter(active)
+    .filter((r) => !fq || [norm(r.plate), norm(r.code), r.spot].some((s) => s.includes(fq)))
+    .sort((a, b) => (a.spot < b.spot ? -1 : 1));
+
+  setHtml(
+    $("act"),
+    rows.length
+      ? rows
+          .map((r) => {
+            const inn = r.status === "in";
+            const due = inn ? dueOf(r) : 0;
+            return (
+              `<tr><td><b>${r.spot}</b></td>` +
+              `<td class="mono">${esc(r.plate)}${isEmp(r.plate) ? ' <span class="tag emp">Empleado</span>' : ""}</td>` +
+              `<td><span class="tag ${inn ? "busy" : "resv"}">${inn ? "Ocupado" : "Reservado"}</span></td>` +
+              `<td>${hhmm(inn ? r.checkin : r.start)}</td>` +
+              `<td>${inn ? fmtDur(Date.now() - r.checkin) : "—"}</td>` +
+              `<td>${inn ? (due > 0 ? `<span class="tag bad">$${due} por cobrar</span>` : `<span class="tag ok">Pagado</span>`) : "—"}</td>` +
+              `<td class="act">` +
+              (inn
+                ? `<button class="btn sm${due > 0 ? "" : " ghost"}" data-a="out" data-c="${r.code}">${due > 0 ? "Cobrar y salir" : "Registrar salida"}</button>`
+                : `<button class="btn sm" data-a="in" data-c="${r.code}">Check-in</button><button class="btn sm ghost" data-a="cancel" data-c="${r.code}">Cancelar</button>`) +
+              `</td></tr>`
+            );
+          })
+          .join("")
+      : `<tr><td colspan="7" class="empty">${fq ? "Sin resultados para esa búsqueda." : "No hay reservas activas."}</td></tr>`,
+  );
 }
 
 function apply(code, act) {
-  var a = all(),
-    r = a.filter(function (x) {
-      return x.code === code;
-    })[0],
-    m = $("actMsg");
-  m.className = "msg";
-  m.textContent = "";
-  if (
-    !r ||
-    !active(r) ||
-    (act === "in" && r.status !== "reserved") ||
-    (act === "out" && r.status !== "in")
-  ) {
-    m.textContent = "Esa reserva ya cambió. Se actualizó la lista.";
-    renderAll();
-    return;
+  const a = all();
+  const r = a.find((x) => x.code === code);
+  if (!r || !active(r) || (act === "in" && r.status !== "reserved") || (act === "out" && r.status !== "in")) {
+    toast("Esa reserva ya cambió. Se actualizó la lista.", "bad");
+    return renderAll();
   }
-  m.className = "msg ok";
   if (act === "in") {
     r.status = "in";
     r.checkin = Date.now();
-    m.textContent = "Check-in registrado: " + r.plate + " en " + r.spot + ".";
+    sv(KEY.res, a);
+    toast(`Check-in registrado: ${r.plate} en ${r.spot}.`, "ok");
   } else if (act === "cancel") {
     r.status = "cancelled";
-    m.textContent =
-      "Reserva de " +
-      r.plate +
-      " cancelada. El cajón " +
-      r.spot +
-      " quedó libre.";
+    sv(KEY.res, a);
+    toast(`Reserva de ${r.plate} cancelada. El cajón ${r.spot} quedó libre.`, "ok");
   } else {
-    var c = cost(r);
-    r.status = "done";
-    m.textContent =
-      "Salida de " +
-      r.plate +
-      " (" +
-      r.spot +
-      "). Total: $" +
-      c +
-      " MXN" +
-      (isEmp(r.plate) ? " (empleado: revisar si aplica descuento)." : ".");
+    const due = dueOf(r);
+    if (due > 0) addPayment(code, "efectivo");
+    const f = exitRecord(code);
+    toast(
+      `Salida de ${f.plate} (${f.spot}). ` + (due > 0 ? `Cobrado en efectivo: ${money(due)}.` : `Ya estaba pagado: ${money(paidOf(f))}.`) + (isEmp(f.plate) ? " Empleado: revisar si aplica descuento." : ""),
+      "ok",
+    );
   }
-  sv("sp2_res", a);
   renderAll();
 }
 
-$("act").addEventListener("click", function (e) {
-  var b = e.target.closest("button[data-a]");
+$("act").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-a]");
   if (!b) return;
-  var act = b.dataset.a,
-    code = b.dataset.c,
-    r = all().filter(function (x) {
-      return x.code === code;
-    })[0];
+  const act = b.dataset.a;
+  const code = b.dataset.c;
+  const r = all().find((x) => x.code === code);
   if (!r) return;
-  var who = '<b class="mono">' + esc(r.plate) + "</b>",
-    sp = "<b>" + r.spot + "</b>",
-    go = function () {
-      apply(code, act);
-    };
-  $("actMsg").textContent = "";
-  if (act === "in")
-    ask({
-      title: "Confirmar check-in",
-      body: "¿Registrar la entrada de " + who + " en el cajón " + sp + "?",
-      ok: "Sí, registrar entrada",
-      fn: go,
-    });
-  else if (act === "cancel")
+  const who = `<b class="mono">${esc(r.plate)}</b>`;
+  const sp = `<b>${r.spot}</b>`;
+  const go = () => apply(code, act);
+
+  if (act === "in") {
+    ask({ title: "Confirmar check-in", body: `¿Registrar la entrada de ${who} en el cajón ${sp}?`, ok: "Sí, registrar entrada", fn: go });
+  } else if (act === "cancel") {
     ask({
       title: "Cancelar reserva",
-      body:
-        "Vas a cancelar la reserva de " +
-        who +
-        " en el cajón " +
-        sp +
-        ". El cajón quedará libre y <b>esta acción no se puede deshacer</b>.",
+      body: `Vas a cancelar la reserva de ${who} en el cajón ${sp}. El cajón quedará libre y <b>esta acción no se puede deshacer</b>.`,
       ok: "Sí, cancelar reserva",
       danger: 1,
       fn: go,
     });
-  else
+  } else {
+    const due = dueOf(r);
     ask({
-      title: "Registrar salida",
+      title: due > 0 ? "Cobrar y registrar salida" : "Registrar salida",
       body:
-        "¿Confirmas la salida de " +
-        who +
-        " del cajón " +
-        sp +
-        "?<br>Total a pagar: <b>$" +
-        cost(r) +
-        " MXN</b>. El cajón quedará libre.",
-      ok: "Sí, registrar salida",
+        `Vehículo ${who} · cajón ${sp}<br>Tiempo dentro: <b>${fmtDur(Date.now() - r.checkin)}</b><br>` +
+        (due > 0
+          ? `Por cobrar: <b>${money(due)}</b> en efectivo. El cajón quedará libre.`
+          : `Pago completo (${money(paidOf(r))}). El cajón quedará libre.`),
+      ok: due > 0 ? "Sí, cobrar y salir" : "Sí, registrar salida",
       danger: 1,
       fn: go,
     });
+  }
 });
 
 /* ---- Empleados ---- */
@@ -347,97 +271,70 @@ $("empPlate").addEventListener("input", function () {
 });
 
 function renderEmp() {
-  var e = emps();
-  $("emp").innerHTML = e.length
-    ? e
-        .map(function (x, i) {
-          return (
-            "<tr><td>" +
-            esc(x.name) +
-            '</td><td class="mono">' +
-            esc(x.plate) +
-            '</td><td class="act"><button class="btn sm out" data-i="' +
-            i +
-            '">Quitar</button></td></tr>'
-          );
-        })
-        .join("")
-    : '<tr><td colspan="3" class="empty">Aún no hay empleados registrados.</td></tr>';
+  const e = emps();
+  setHtml(
+    $("emp"),
+    e.length
+      ? e
+          .map((x, i) => `<tr><td>${esc(x.name)}</td><td class="mono">${esc(x.plate)}</td><td class="act"><button class="btn sm ghost" data-i="${i}">Quitar</button></td></tr>`)
+          .join("")
+      : `<tr><td colspan="3" class="empty">Aún no hay empleados registrados.</td></tr>`,
+  );
 }
 
-$("empBtn").addEventListener("click", function () {
-  var n = $("empName").value.trim(),
-    p = $("empPlate").value.trim().toUpperCase(),
-    m = $("empMsg");
-  m.className = "msg";
-  if (!n) {
-    m.textContent = "Escribe el nombre.";
-    return;
-  }
-  if (p.length < 5) {
-    m.textContent = "Escribe la placa completa (mínimo 5 caracteres).";
-    return;
-  }
-  if (isEmp(p)) {
-    m.textContent = "Esa placa ya está registrada.";
-    return;
-  }
-  var e = emps();
+$("empBtn").addEventListener("click", () => {
+  const n = $("empName").value.trim();
+  const p = fmtPlate($("empPlate").value);
+  if (!n) return toast("Escribe el nombre.", "bad");
+  if (norm(p).length < 5) return toast("Escribe la placa completa (mínimo 5 caracteres).", "bad");
+  if (isEmp(p)) return toast("Esa placa ya está registrada.", "bad");
+  const e = emps();
   e.push({ name: n, plate: p });
-  sv("sp2_emp", e);
+  sv(KEY.emp, e);
   $("empName").value = "";
   $("empPlate").value = "";
-  m.className = "msg ok";
-  m.textContent = "Empleado registrado.";
+  toast("Empleado registrado.", "ok");
   renderAll();
 });
 
-$("emp").addEventListener("click", function (ev) {
-  var b = ev.target.closest("button[data-i]");
+$("emp").addEventListener("click", (ev) => {
+  const b = ev.target.closest("button[data-i]");
   if (!b) return;
-  var x = emps()[+b.dataset.i];
+  const x = emps()[+b.dataset.i];
   if (!x) return;
   ask({
     title: "Eliminar empleado",
-    body:
-      "Vas a quitar a <b>" +
-      esc(x.name) +
-      '</b> (<b class="mono">' +
-      esc(x.plate) +
-      "</b>) de la lista de empleados. <b>Esta acción no se puede deshacer</b>.",
+    body: `Vas a quitar a <b>${esc(x.name)}</b> (<b class="mono">${esc(x.plate)}</b>) de la lista de empleados. <b>Esta acción no se puede deshacer</b>.`,
     ok: "Sí, eliminar",
     danger: 1,
-    fn: function () {
-      var e = emps().filter(function (y) {
-        return y.plate !== x.plate;
-      });
-      sv("sp2_emp", e);
-      $("empMsg").className = "msg ok";
-      $("empMsg").textContent = "Empleado eliminado.";
+    fn: () => {
+      sv(KEY.emp, emps().filter((y) => norm(y.plate) !== norm(x.plate)));
+      toast("Empleado eliminado.", "ok");
       renderAll();
     },
   });
 });
 
 /* ---- Confirmación antes de eliminar o modificar ---- */
-var pending = null;
+let pending = null;
 
 function ask(o) {
   $("dTitle").textContent = o.title;
   $("dBody").innerHTML = o.body;
   $("dOk").textContent = o.ok;
+  $("dOk").className = "btn" + (o.danger ? "" : "");
   pending = o.fn;
   $("dlg").showModal();
   (o.danger ? $("dNo") : $("dOk")).focus();
 }
 
-$("dNo").addEventListener("click", function () {
+$("dNo").addEventListener("click", () => {
   pending = null;
   $("dlg").close();
 });
 
-$("dOk").addEventListener("click", function () {
-  var f = pending;
+$("dOk").addEventListener("click", () => {
+  const f = pending;
   pending = null;
   $("dlg").close();
   if (f) f();
@@ -450,29 +347,16 @@ $("dlg").addEventListener("click", function (e) {
   }
 });
 
-$("dlg").addEventListener("close", function () {
+$("dlg").addEventListener("close", () => {
   pending = null;
 });
 
-/* ---- Menú ---- */
-$("menuBtn").addEventListener("click", function () {
-  var o = $("nav").classList.toggle("hidden");
-  this.setAttribute("aria-expanded", String(!o));
-});
-
-$("nav").addEventListener("click", function (e) {
-  if (e.target.tagName === "A") {
-    $("nav").classList.add("hidden");
-    $("menuBtn").setAttribute("aria-expanded", "false");
-  }
-});
-
-$("logout").addEventListener("click", function () {
+$("logout").addEventListener("click", () => {
   ask({
     title: "Cerrar sesión",
     body: "Saldrás del panel de administrador y tendrás que iniciar sesión de nuevo.",
     ok: "Sí, cerrar sesión",
-    fn: function () {
+    fn: () => {
       try {
         sessionStorage.removeItem("sp2_admin");
       } catch (e) {}
@@ -481,15 +365,30 @@ $("logout").addEventListener("click", function () {
   });
 });
 
+/* ---- Pestaña activa según el scroll ---- */
+if ("IntersectionObserver" in window) {
+  const links = [...document.querySelectorAll("#sub a")];
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting) {
+          links.forEach((l) => l.setAttribute("aria-current", String(l.getAttribute("href") === "#" + en.target.id)));
+        }
+      });
+    },
+    { rootMargin: "-30% 0px -60% 0px" },
+  );
+  document.querySelectorAll("main section").forEach((s) => io.observe(s));
+}
+
 function renderAll() {
+  renderKpis();
   renderChart();
-  renderFree();
+  renderMap();
   renderActive();
   renderEmp();
 }
 
 renderAll();
-
 setInterval(renderAll, 5000);
-
-window.addEventListener("storage", renderAll); // se actualiza si el usuario reserva en otra pestaña
+window.addEventListener("storage", renderAll); // se actualiza si se reserva en otra pestaña
