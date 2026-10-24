@@ -1,27 +1,28 @@
-function isEmp(p) {
-  return (ld("sp2_emp") || []).some(function (e) {
-    return norm(e.plate) === norm(p);
-  });
+/* acceso.js · Entrada de placa */
+
+function showFree() {
+  const n = countFree();
+  const el = $("freeInfo");
+  el.textContent = n ? n + " de 48 cajones libres" : "Estacionamiento lleno";
+  el.classList.toggle("none", !n);
 }
 
-/* Entrada de placa */
 $("pin").addEventListener("input", function () {
   this.value = fmtPlate(this.value.slice(0, 8));
   $("plate").classList.remove("err");
   $("msg").textContent = "";
 });
 
-$("pin").addEventListener("keydown", function (e) {
+$("pin").addEventListener("keydown", (e) => {
   if (e.key === "Enter") go();
 });
 
 $("go").addEventListener("click", go);
 
-/* Al registrar, se abre el boleto (boleto.html) */
+/* Al registrar, se abre el boleto */
 function show(r, dup) {
-  sv("sp2_last", { code: r.code, dup: dup });
-  location.href =
-    "boleto.html?b=" + encodeURIComponent(r.code) + (dup ? "&d=1" : "");
+  sv(KEY.last, { code: r.code, dup: dup });
+  location.href = "boleto.html?b=" + encodeURIComponent(r.code) + (dup ? "&d=1" : "");
 }
 
 function fail(m) {
@@ -31,52 +32,50 @@ function fail(m) {
 }
 
 function go() {
-  var raw = norm($("pin").value);
+  const raw = norm($("pin").value);
   if (raw.length < 5) {
     fail("Escribe la placa completa (mínimo 5 caracteres).");
     return;
   }
-  var a = all(),
-    r = a.filter(function (x) {
-      return active(x) && norm(x.plate) === raw;
-    })[0];
+  const a = all();
+  const r = a.find((x) => active(x) && norm(x.plate) === raw);
+
   if (r && r.status === "in") {
     show(r, true);
     return;
   }
+
   if (r && r.status === "reserved") {
     if (Date.now() < r.start - TOL) {
-      fail(
-        "Tu reserva empieza a las " +
-          hhmm(r.start) +
-          ". El acceso abre 15 min antes.",
-      );
+      fail("Tu reserva empieza a las " + hhmm(r.start) + ". El acceso abre 15 min antes.");
       return;
     }
     r.status = "in";
     r.checkin = Date.now();
-    sv("sp2_res", a);
+    sv(KEY.res, a);
     show(r, false);
     return;
   }
-  var spot = firstFree();
+
+  const spot = firstFree();
   if (!spot) {
     fail("El estacionamiento está lleno por ahora.");
     return;
   }
-  var n = Date.now(),
-    w = {
-      code: "SP-" + Math.floor(1000 + Math.random() * 9000),
-      plate: fmtPlate(raw),
-      spot: spot,
-      start: n,
-      checkin: n,
-      status: "in",
-      walkin: true,
-    };
+  const n = Date.now();
+  const w = {
+    code: newCode(),
+    plate: fmtPlate(raw),
+    spot: spot,
+    start: n,
+    checkin: n,
+    status: "in",
+    walkin: true,
+  };
   a.push(w);
-  sv("sp2_res", a);
+  sv(KEY.res, a);
   show(w, false);
 }
 
+showFree();
 $("pin").focus();

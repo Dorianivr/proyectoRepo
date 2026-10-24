@@ -2,76 +2,44 @@
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#111111" />
     <title>SmartPark · Acceso inteligente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="comun.css" />
     <link rel="stylesheet" href="acceso.css" />
   </head>
-  <body>
-    <header>
-      <div class="lg" aria-hidden="true">
-        <svg
-          width="28"
-          height="28"
-          viewBox="0 0 34 34"
-          fill="none"
-          stroke="#111"
-          stroke-width="3"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M5 12l3-6h18l3 6" />
-          <path d="M6 12h22v16H6z" />
-          <path d="M11 28v-7h12v7" />
-          <path d="M14 17h6" />
-        </svg>
+  <body data-tab="entrada">
+    <header data-sub="ACCESO"></header>
+    <main class="wrap center">
+      <div class="card glow">
+        <h1>Ingresa placas</h1>
+        <p class="lead">Introduce la matrícula para registrar la entrada</p>
+        <p class="free-pill" id="freeInfo" aria-live="polite"></p>
+        <div class="plate" id="plate">
+          <div class="pt"><span>MÉXICO</span><i>SMARTPARK</i><span>2026</span></div>
+          <input
+            id="pin"
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            autocapitalize="characters"
+            spellcheck="false"
+            maxlength="8"
+            placeholder="ABC-123"
+            aria-label="Placa del vehículo"
+          />
+          <div class="pb">REGISTRO DE VEHÍCULO</div>
+        </div>
+        <p class="msg" id="msg" role="alert"></p>
+        <button class="btn block" id="go">
+          Ingresar
+          <svg width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14h20M16 6l8 8-8 8" /></svg>
+        </button>
       </div>
-      <div class="brand"><b>SMART</b><span>PARK</span></div>
-      <small>ACCESO</small>
-    </header>
-    <main>
-      <div class="card">
-        <section id="s1">
-          <h1>Ingresa Placas</h1>
-          <p class="lead">Introduce la matrícula para registrar la entrada</p>
-          <div class="plate" id="plate">
-            <div class="pt">
-              <span>MÉXICO</span><i>SMARTPARK</i><span>2026</span>
-            </div>
-            <input
-              id="pin"
-              type="text"
-              inputmode="text"
-              autocomplete="off"
-              autocapitalize="characters"
-              spellcheck="false"
-              maxlength="8"
-              placeholder="ABC-123"
-              aria-label="Placa del vehículo"
-            />
-            <div class="pb">REGISTRO DE VEHÍCULO</div>
-          </div>
-          <p class="msg" id="msg" role="alert"></p>
-          <button class="btn" id="go">
-            Ingresar
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 28 28"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M4 14h20M16 6l8 8-8 8" />
-            </svg>
-          </button>
-        </section>
-      </div>
+      <a class="back" href="accesoadmin.html">Acceso del personal</a>
     </main>
     <script src="datos.js"></script>
     <script src="acceso.js"></script>
