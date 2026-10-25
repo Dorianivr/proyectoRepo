@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f2a4a" />
+    <title>Pasarela de pago (simulada)</title>
+    <link rel="stylesheet" href="pasarela.css" />
+  </head>
+  <body>
+    <div class="sim" role="note">SIMULACIÓN · Esta pantalla imita una pasarela de pago. No se hace ningún cargo real.</div>
+    <header class="gw">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+      <b>Pago seguro</b>
+      <span>PasarelaDemo</span>
+    </header>
+
+    <main>
+      <section id="none" class="box hidden">
+        <h1>No hay un pago pendiente</h1>
+        <p class="lead">Esta sesión de pago no existe o ya terminó.</p>
+        <a class="btn" href="acceso.html">Volver a SmartPark</a>
+      </section>
+
+      <section id="pay" class="hidden">
+        <div class="box sumry">
+          <div class="row"><span>Comercio</span><b>SmartPark</b></div>
+          <div class="row"><span>Concepto</span><b id="concept"></b></div>
+          <div class="amt"><small>Total a pagar</small><b id="amount"></b></div>
+          <p class="exp" id="expLine"></p>
+        </div>
+
+        <form class="box" id="form" novalidate>
+          <h2>Pagar con tarjeta</h2>
+          <label for="cc">Número de tarjeta</label>
+          <input id="cc" inputmode="numeric" autocomplete="off" placeholder="0000 0000 0000 0000" maxlength="23" />
+          <div class="g2">
+            <div><label for="exp">Vence (MM/AA)</label><input id="exp" inputmode="numeric" autocomplete="off" placeholder="MM/AA" maxlength="5" /></div>
+            <div><label for="cvv">CVV</label><input id="cvv" type="password" inputmode="numeric" autocomplete="off" placeholder="123" maxlength="4" /></div>
+          </div>
+          <p class="msg" id="msg" role="alert"></p>
+          <button class="btn" id="ok" type="submit">Pagar</button>
+          <button class="btn ghost" id="cancel" type="button">Cancelar y volver a SmartPark</button>
+          <p class="priv">SmartPark <b>no recibe ni guarda</b> los datos de tu tarjeta. Solo recibe la confirmación del pago y un folio.</p>
+          <p class="demo" id="demo">Tarjeta de prueba: <b>4242 4242 4242 4242</b>, cualquier fecha futura y cualquier CVV.</p>
+        </form>
+      </section>
+
+      <section id="proc" class="box center hidden" aria-live="polite">
+        <div class="spin" aria-hidden="true"></div>
+        <h2>Procesando pago…</h2>
+        <p class="lead">No cierres esta ventana.</p>
+      </section>
+
+      <section id="done" class="box center hidden" aria-live="polite">
+        <div class="okc" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 38 38" fill="none" stroke="#18a35f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20l8 8 14-16" /></svg></div>
+        <h2>Pago aprobado</h2>
+        <p class="lead">Folio <b id="folio" class="mono"></b></p>
+        <p class="lead">Regresando a SmartPark…</p>
+      </section>
+    </main>
+    <script src="datos.js"></script>
+    <script src="pasarela.js"></script>
+  </body>
+</html>

@@ -1,0 +1,242 @@
+/* boleto.css · Solo lo propio del boleto y del pago */
+
+main {
+  text-align: center;
+  overflow-x: clip; /* las muescas del boleto sobresalen unos px */
+}
+
+.okc {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: rgba(61, 220, 151, 0.14);
+  border: 2px solid #2f8f6f;
+}
+
+.empty {
+  margin-top: 30px;
+}
+
+/* ---------- Boleto ---------- */
+.tk {
+  position: relative;
+  margin: 22px 0 16px;
+  padding: 22px;
+  border: 3px solid var(--yel);
+  border-radius: var(--r-lg);
+  background: #fff;
+  color: #1c2333;
+  text-align: left;
+  box-shadow: 0 0 30px rgba(245, 196, 0, 0.15);
+}
+
+.tk small {
+  display: block;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: #6b7790;
+}
+
+.tkh {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.tkh .mono {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.pill {
+  padding: 7px 14px;
+  border-radius: 12px;
+  background: var(--yel);
+  color: #26272b;
+  font-size: var(--fs-sm);
+  font-weight: 800;
+}
+
+.pill.paid {
+  background: #1f9d68;
+  color: #fff;
+}
+
+.pill.out {
+  background: #3b3f46;
+  color: #fff;
+}
+
+.hr {
+  margin: 14px 0 16px;
+  border-top: 1.5px solid #e3e6ec;
+}
+
+.tk .g2 {
+  margin-bottom: 12px;
+}
+
+.bx {
+  padding: 12px 14px;
+  border: 1px solid #e6eaf0;
+  border-radius: var(--r-md);
+  background: #f6f8fb;
+}
+
+.bx b {
+  display: block;
+  margin-top: 4px;
+  font: 700 clamp(20px, 6vw, 26px) / 1.2 var(--mono);
+  letter-spacing: 0;
+}
+
+.bx em {
+  display: block;
+  font-style: normal;
+  font-size: var(--fs-xs);
+  color: #8a4b0f;
+}
+
+.cj {
+  background: #fff8d8;
+  border-color: #f3df8a;
+}
+
+.cj small {
+  color: #8a4b0f;
+}
+
+.cj b {
+  color: #b86a00;
+  font-size: clamp(26px, 8vw, 34px);
+}
+
+.tot b {
+  color: #1c2333;
+}
+
+.tot.paid {
+  background: #e4f6ee;
+  border-color: #b5e5d0;
+}
+
+.tot.paid b {
+  color: #15704a;
+}
+
+.tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 20px;
+  background: #26272b;
+  color: var(--yel);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* Cortes del boleto */
+.tear {
+  position: relative;
+  margin: 18px 0;
+  border-top: 2px dashed #d5d8de;
+}
+
+.tear::before,
+.tear::after {
+  content: "";
+  position: absolute;
+  top: -19px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #1b1c20;
+}
+
+.tear::before {
+  left: -43px;
+}
+
+.tear::after {
+  right: -43px;
+}
+
+.tear.t2::before,
+.tear.t2::after {
+  display: none;
+}
+
+/* Código de barras */
+.barcode {
+  height: 72px;
+  padding: 0 6px;
+}
+
+.barnum {
+  margin: 6px 0 0;
+  text-align: center;
+  font-size: var(--fs-sm);
+  letter-spacing: 0.2em;
+  color: #6b7790;
+}
+
+.btn.dl {
+  background: #26272b;
+  color: #fff;
+  box-shadow: none;
+  font-size: var(--fs-md);
+}
+
+/* ---------- Pago ---------- */
+.pay {
+  margin-top: 4px;
+  padding: 22px 20px;
+  text-align: center;
+}
+
+.pay h2 {
+  margin: 0 0 6px;
+}
+
+.pay .amt {
+  margin: 8px 0 4px;
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.pay .amt small {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  color: var(--mute);
+}
+
+.pay .sub {
+  margin: 0 0 16px;
+  color: var(--mute);
+  font-size: var(--fs-sm);
+}
+
+.pay.ok {
+  border-color: rgba(61, 220, 151, 0.5);
+}
+
+.pay .stamp {
+  color: var(--ok);
+  font-weight: 800;
+}
+
+.pay .btn + .btn {
+  margin-top: 10px;
+}
+
+@media (min-width: 700px) {
+  main {
+    padding-top: 40px;
+  }
+}

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#111111" />
+    <title>SmartPark · Reservaciones</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="comun.css" />
+    <link rel="stylesheet" href="reservaciones.css" />
+  </head>
+  <body data-tab="reservar">
+    <header data-sub="RESERVAS"></header>
+    <main class="wrap wide">
+      <!-- Paso: crear reserva -->
+      <section id="s1" class="rsv">
+        <ol class="steps" id="steps" aria-label="Progreso">
+          <li data-s="1"><b>1</b>Datos</li>
+          <li data-s="2"><b>2</b>Área</li>
+          <li data-s="3"><b>3</b>Cajón</li>
+        </ol>
+
+        <div class="f card">
+          <label for="plate">Placa del vehículo</label>
+          <input class="fld" id="plate" maxlength="9" placeholder="ABC-123" autocomplete="off" autocapitalize="characters" style="text-transform: uppercase" />
+          <div class="g2">
+            <div>
+              <label for="date">Día</label>
+              <input class="fld" id="date" type="date" />
+            </div>
+            <div>
+              <label for="time">Hora de llegada</label>
+              <input class="fld" id="time" type="time" step="900" />
+            </div>
+          </div>
+        </div>
+
+        <div class="m card">
+          <h2>Elige tu área</h2>
+          <div class="areas" id="areas"></div>
+          <div id="hint" class="hint">Primero elige un área para ver sus cajones.</div>
+          <div id="cajones" class="map hidden">
+            <h2 id="cTitle"></h2>
+            <svg viewBox="0 0 400 210" id="map" role="group" aria-label="Cajones del área"></svg>
+            <div class="legend">
+              <span><i class="free"></i>Libre</span>
+              <span><i class="resv"></i>Reservado</span>
+              <span><i class="busy"></i>Ocupado</span>
+              <span><i class="sel"></i>Tu cajón</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="b">
+          <div class="sum">
+            <div>Tu cajón<br /><b id="selTxt">ninguno</b></div>
+            <div style="text-align: right">Tarifa de reservación<br /><b id="feeTxt">—</b></div>
+          </div>
+          <p class="feewhy" id="feeWhy"></p>
+          <p class="msg dim" id="msg" role="status"></p>
+          <button class="btn block" id="book" disabled>Pagar y reservar</button>
+          <p class="note">La tarifa de reservación se paga ahora en una pasarela de pago segura (SmartPark no guarda tus datos de tarjeta) y depende del día y la hora de llegada. Ya dentro, se cobra además $15 MXN por hora estacionada. Tendrás 15 minutos de tolerancia; la tarifa de reservación no es reembolsable.</p>
+        </div>
+      </section>
+
+      <!-- Paso: reserva hecha -->
+      <section id="s2" class="rsv2 hidden">
+        <div class="ticket card">
+          <div class="top" id="tTop">
+            <small id="tArea">Tu cajón reservado</small>
+            <div class="big" id="tSpot"></div>
+            <small>Nivel 1</small>
+          </div>
+          <div class="stat" id="stat" aria-live="polite"></div>
+          <div class="rows">
+            <div class="row"><span>Código</span><b class="mono" id="tCode"></b></div>
+            <div class="row"><span>Placa</span><b class="mono" id="tPlate"></b></div>
+            <div class="row"><span>Llegada</span><b id="tStart"></b></div>
+            <div class="row"><span>Reservación</span><b id="tFee"></b></div>
+            <div class="row"><span id="tCl">Tarifa</span><b id="tCost"></b></div>
+          </div>
+          <p class="note" style="padding: 0 18px 16px">
+            Al llegar, registra tu placa en el <a href="acceso.html">acceso</a> para confirmar tu entrada.
+          </p>
+        </div>
+
+        <div class="card map2">
+          <h2>Dónde está tu cajón</h2>
+          <div class="map"><svg viewBox="0 0 400 210" id="map2" role="img" aria-label="Ubicación de tu cajón"></svg></div>
+        </div>
+
+        <div class="acts">
+          <a class="btn block hidden" id="pay" href="boleto.html">Ver boleto y pagar</a>
+          <button class="btn ghost block" id="cancel">Cancelar reserva</button>
+          <button class="btn block hidden" id="again">Hacer una nueva reserva</button>
+        </div>
+      </section>
+    </main>
+    <script src="datos.js"></script>
+    <script src="reservaciones.js"></script>
+  </body>
+</html>

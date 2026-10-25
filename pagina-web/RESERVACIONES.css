@@ -1,0 +1,248 @@
+/* reservaciones.css · Solo lo propio de esta pantalla */
+
+/* Pasos 1-2-3 */
+.steps {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.steps li {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 6px;
+  border: 1.5px solid var(--line);
+  border-radius: 99px;
+  color: var(--mute);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.steps b {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--card2);
+  font-size: var(--fs-xs);
+}
+
+.steps li.now {
+  border-color: var(--yel);
+  color: var(--ink);
+}
+
+.steps li.now b {
+  background: var(--yel);
+  color: var(--yel-ink);
+}
+
+.steps li.done {
+  color: var(--ok);
+  border-color: rgba(61, 220, 151, 0.5);
+}
+
+.steps li.done b {
+  background: var(--ok);
+  color: #0b2a1d;
+}
+
+/* Bloques de la pantalla */
+.rsv > .card,
+.rsv > .b {
+  margin-bottom: 14px;
+}
+
+.m h2 {
+  font-size: var(--fs-md);
+}
+
+.map h2 {
+  margin: 0 0 8px;
+  font-size: var(--fs-md);
+  font-weight: 800;
+}
+
+.map h2 span {
+  color: var(--mute);
+  font-weight: 500;
+  font-size: var(--fs-sm);
+}
+
+.hint {
+  padding: 14px;
+  border: 1.5px dashed var(--line);
+  border-radius: var(--r-md);
+  color: var(--mute);
+  font-size: var(--fs-sm);
+  text-align: center;
+}
+
+.sum {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--card);
+  font-size: var(--fs-sm);
+  color: var(--mute);
+}
+
+.sum b {
+  font-size: var(--fs-md);
+  color: var(--ink);
+}
+
+/* Boleto de reserva */
+.ticket {
+  padding: 0;
+  overflow: hidden;
+}
+
+.top {
+  padding: 16px;
+  background: var(--card2);
+  color: #fff;
+  text-align: center;
+}
+
+.top small {
+  display: block;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.big {
+  font-size: 56px;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.stat {
+  padding: 12px 16px;
+  text-align: center;
+  font-weight: 700;
+  background: var(--card2);
+  border-bottom: 1px solid var(--line);
+}
+
+.stat.warn {
+  background: #4a3a10;
+  color: var(--yel);
+}
+
+.stat.in {
+  background: #12392a;
+  color: var(--ok);
+}
+
+.stat.dead {
+  background: #4a2019;
+  color: var(--bad);
+}
+
+.rows {
+  padding: 4px 18px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.row:last-child {
+  border: 0;
+}
+
+.row span {
+  color: var(--mute);
+  font-size: var(--fs-sm);
+}
+
+.row b {
+  font-size: var(--fs-lg);
+}
+
+.rsv2 .card {
+  margin-bottom: 14px;
+}
+
+.acts {
+  display: grid;
+  gap: 10px;
+}
+
+@media (max-width: 380px) {
+  .big {
+    font-size: 44px;
+  }
+  .steps li {
+    font-size: var(--fs-xs);
+  }
+}
+
+/* Escritorio: formulario a la izquierda, mapa a la derecha */
+@media (min-width: 900px) {
+  main {
+    padding: 28px 24px;
+  }
+  .rsv {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    grid-template-areas:
+      "steps steps"
+      "f m"
+      "b m";
+    column-gap: 28px;
+    align-items: start;
+  }
+  .rsv .steps {
+    grid-area: steps;
+  }
+  .rsv .f {
+    grid-area: f;
+  }
+  .rsv .m {
+    grid-area: m;
+  }
+  .rsv .b {
+    grid-area: b;
+  }
+  .rsv2 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    column-gap: 28px;
+    align-items: start;
+  }
+  .rsv2 .ticket {
+    grid-column: 1;
+  }
+  .rsv2 .map2 {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    margin-bottom: 0;
+  }
+  .rsv2 .acts {
+    grid-column: 1;
+  }
+}
+
+.feewhy {
+  margin: -6px 0 12px;
+  text-align: right;
+  color: var(--mute);
+  font-size: var(--fs-xs);
+  min-height: 16px;
+}

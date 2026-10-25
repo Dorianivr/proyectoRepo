@@ -1,0 +1,257 @@
+/* administrador.css · Solo el diseño propio del panel.
+   Colores, botones, tarjetas y mapa vienen de comun.css */
+
+header .role {
+  margin-left: 4px;
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.lo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 6px 12px;
+  border: 1.5px solid var(--yel);
+  border-radius: 10px;
+  background: none;
+  color: var(--yel);
+  font: 700 var(--fs-sm) var(--font);
+  cursor: pointer;
+}
+
+.lo:hover {
+  background: var(--yel);
+  color: var(--yel-ink);
+}
+
+.lo:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Pestañas de sección (siempre visibles) */
+.sub {
+  position: sticky;
+  top: 62px;
+  z-index: 15;
+  display: flex;
+  gap: 6px;
+  padding: 8px 18px;
+  overflow-x: auto;
+  background: #181a1d;
+  border-bottom: 1px solid var(--line);
+}
+
+.sub a {
+  flex: none;
+  padding: 8px 16px;
+  border-radius: 99px;
+  color: var(--mute);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.sub a:hover {
+  color: #fff;
+}
+
+.sub a[aria-current="true"] {
+  background: rgba(245, 196, 0, 0.14);
+  color: var(--yel);
+}
+
+main section {
+  margin-bottom: 20px;
+  scroll-margin-top: 130px;
+}
+
+#resumen .kpis {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin-bottom: 16px;
+}
+
+.chart svg {
+  width: 100%;
+  height: auto;
+}
+
+.gl {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.ax {
+  fill: var(--mute);
+  font-size: 11px;
+}
+
+.bar {
+  fill: #4b4e56;
+}
+
+.bar.today {
+  fill: var(--yel);
+}
+
+.bv {
+  fill: var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+/* Cajones + reservar */
+.two {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.hintline {
+  margin: -6px 0 12px;
+  color: var(--mute);
+  font-size: var(--fs-sm);
+}
+
+.chosen {
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1.5px dashed var(--line);
+  border-radius: var(--r-md);
+  text-align: center;
+  color: var(--mute);
+  font-weight: 600;
+}
+
+.chosen.on {
+  border: 1.5px solid var(--yel);
+  background: rgba(245, 196, 0, 0.1);
+  color: var(--ink);
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+
+/* Tabla */
+.bar-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.bar-top h2 {
+  margin: 8px 0 0;
+}
+
+.search {
+  flex: 1;
+  min-width: 220px;
+  max-width: 340px;
+}
+
+.search .fld {
+  margin-bottom: 8px;
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.tw {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+th {
+  padding: 8px;
+  border-bottom: 1.5px solid var(--line);
+  text-align: left;
+  color: var(--mute);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+tr:last-child td {
+  border: 0;
+}
+
+td.act {
+  text-align: right;
+}
+
+td.act .btn {
+  margin-left: 6px;
+}
+
+td b {
+  font-size: var(--fs-md);
+}
+
+.empty {
+  padding: 18px 0;
+  text-align: center;
+  color: var(--mute);
+}
+
+/* Empleados */
+.emp-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 8px;
+}
+
+.emp-form .btn {
+  height: var(--h-field);
+  margin-bottom: 14px;
+  font-size: var(--fs-md);
+}
+
+@media (max-width: 860px) {
+  .two {
+    grid-template-columns: 1fr;
+  }
+  .emp-form {
+    grid-template-columns: 1fr 1fr;
+  }
+  .emp-form .btn {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 520px) {
+  .lo span {
+    display: none;
+  }
+  .lo {
+    padding: 8px;
+  }
+  .emp-form {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <script src="guardia.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#111111" />
+    <title>SmartPark · Administrador</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="comun.css" />
+    <link rel="stylesheet" href="administrador.css" />
+  </head>
+  <body>
+    <header>
+      <div class="lg" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 34 34" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l3-6h18l3 6" /><path d="M6 12h22v16H6z" /><path d="M11 28v-7h12v7" /><path d="M14 17h6" /></svg>
+      </div>
+      <div class="brand"><b>SMART</b><span>PARK</span></div>
+      <small class="role">ADMIN</small>
+      <button class="lo" id="logout" type="button" aria-label="Cerrar sesión">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /></svg>
+        <span>Salir</span>
+      </button>
+    </header>
+
+    <nav class="sub" id="sub" aria-label="Secciones">
+      <a href="#resumen" aria-current="true">Resumen</a>
+      <a href="#cajones">Cajones</a>
+      <a href="#reservas">Reservas</a>
+      <a href="#empleados">Empleados</a>
+    </nav>
+
+    <main class="wrap admin">
+      <!-- RESUMEN -->
+      <section id="resumen">
+        <div class="kpis" id="kpis"></div>
+        <div class="card chart">
+          <h2>Entradas por día de la semana</h2>
+          <svg viewBox="0 0 400 200" id="chart" role="img" aria-label="Entradas por día de la semana"></svg>
+        </div>
+      </section>
+
+      <!-- CAJONES -->
+      <section id="cajones" class="two">
+        <div class="card">
+          <h2>Mapa de cajones</h2>
+          <div class="areas" id="areas"></div>
+          <div class="map"><svg viewBox="0 0 400 210" id="map" role="group" aria-label="Cajones del área"></svg></div>
+          <div class="legend">
+            <span><i class="free"></i>Libre</span>
+            <span><i class="resv"></i>Reservado</span>
+            <span><i class="busy"></i>Ocupado</span>
+            <span><i class="sel"></i>Seleccionado</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Reservar cajón</h2>
+          <p class="hintline">Toca un cajón libre en el mapa para elegirlo.</p>
+          <div class="chosen" id="chosen">Ningún cajón seleccionado</div>
+          <label for="resPlate">Placa del vehículo</label>
+          <input id="resPlate" class="fld" maxlength="9" placeholder="ABC-123" autocomplete="off" style="text-transform: uppercase" />
+          <button class="btn block" id="resBtn" disabled>Reservar</button>
+          <p class="note">El cliente tendrá 15 min para llegar.</p>
+        </div>
+      </section>
+
+      <!-- RESERVAS ACTIVAS -->
+      <section id="reservas">
+        <div class="card">
+          <div class="bar-top">
+            <h2>Reservas activas</h2>
+            <div class="search">
+              <label for="q" class="sr">Buscar por placa, cajón o código</label>
+              <input id="q" class="fld" type="search" placeholder="Buscar placa, cajón o código" autocomplete="off" />
+            </div>
+          </div>
+          <div class="tw">
+            <table>
+              <thead>
+                <tr><th>Cajón</th><th>Placa</th><th>Estado</th><th>Hora</th><th>Tiempo</th><th>Cobro</th><th></th></tr>
+              </thead>
+              <tbody id="act"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- EMPLEADOS -->
+      <section id="empleados">
+        <div class="card">
+          <h2>Placas de empleados</h2>
+          <div class="emp-form">
+            <div>
+              <label for="empName">Nombre</label>
+              <input id="empName" class="fld" maxlength="40" autocomplete="off" />
+            </div>
+            <div>
+              <label for="empPlate">Placa</label>
+              <input id="empPlate" class="fld" maxlength="9" placeholder="ABC-123" autocomplete="off" style="text-transform: uppercase" />
+            </div>
+            <button class="btn" id="empBtn" type="button">Registrar empleado</button>
+          </div>
+          <div class="tw">
+            <table>
+              <thead><tr><th>Nombre</th><th>Placa</th><th></th></tr></thead>
+              <tbody id="emp"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="dlg" aria-labelledby="dTitle">
+      <div class="dh">
+        <div class="dw" aria-hidden="true">!</div>
+        <h3 id="dTitle"></h3>
+      </div>
+      <div class="db" id="dBody"></div>
+      <div class="da">
+        <button class="btn ghost" id="dNo" type="button">No, volver</button>
+        <button class="btn" id="dOk" type="button"></button>
+      </div>
+    </dialog>
+
+    <script src="datos.js"></script>
+    <script src="administrador.js"></script>
+  </body>
+</html>

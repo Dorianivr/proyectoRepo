@@ -1,0 +1,76 @@
+/* acceso.css · Solo lo propio de la pantalla de acceso (la placa).
+   Colores, botones y tarjetas vienen de comun.css */
+
+.free-pill {
+  width: fit-content;
+  margin: -10px auto 18px;
+  padding: 4px 14px;
+  border-radius: 99px;
+  background: rgba(61, 220, 151, 0.14);
+  color: var(--ok);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.free-pill.none {
+  background: rgba(255, 122, 102, 0.14);
+  color: var(--bad);
+}
+
+.plate {
+  margin-bottom: 12px;
+  padding: 12px 16px 10px;
+  border: 6px solid #9b9ea5;
+  border-radius: 22px;
+  background: #fff;
+  transition:
+    box-shadow 0.15s,
+    border-color 0.15s;
+}
+
+.plate:focus-within {
+  box-shadow: 0 0 0 4px rgba(245, 196, 0, 0.55);
+}
+
+.plate.err {
+  border-color: #e5533d;
+}
+
+.pt {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: #5b6475;
+}
+
+.pt i {
+  font-style: normal;
+  color: #8d99ad;
+}
+
+.plate input {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: center;
+  text-transform: uppercase;
+  outline: 0;
+  color: #1c2333;
+  font: 700 clamp(34px, 11vw, 54px) / 1.2 var(--mono);
+  letter-spacing: 0.1em;
+}
+
+.plate input::placeholder {
+  color: #ccd5e3;
+}
+
+.pb {
+  text-align: center;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #8d99ad;
+}

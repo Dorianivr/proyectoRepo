@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#111111" />
+    <title>SmartPark · Acceso administrador</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="comun.css" />
+    <style>
+      .ic {
+        display: grid;
+        place-items: center;
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 16px;
+        border-radius: 50%;
+        background: rgba(245, 196, 0, 0.12);
+        border: 2px solid rgba(245, 196, 0, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <header data-sub="ADMIN"></header>
+    <main class="wrap center">
+      <div class="card glow">
+        <div class="ic" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#f5c400" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+        </div>
+        <h1>Acceso administrador</h1>
+        <p class="lead">Ingresa tus credenciales para continuar</p>
+
+        <label for="usr">Usuario</label>
+        <div class="fw" id="fu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></svg>
+          <input id="usr" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="admin" />
+        </div>
+
+        <label for="pwd">Contraseña</label>
+        <div class="fw" id="fp">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+          <input id="pwd" type="password" autocomplete="current-password" placeholder="••••••••" />
+          <button type="button" class="eye" id="eye" aria-label="Mostrar contraseña">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+          </button>
+        </div>
+
+        <p class="msg" id="msg" role="alert"></p>
+        <button class="btn block" id="go">
+          Iniciar sesión
+          <svg width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14h20M16 6l8 8-8 8" /></svg>
+        </button>
+        <a class="back" href="acceso.html">← Ir al acceso de clientes</a>
+      </div>
+    </main>
+    <script src="datos.js"></script>
+    <script src="accesoadmin.js"></script>
+  </body>
+</html>
